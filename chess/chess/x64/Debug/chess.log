@@ -1,2 +1,3 @@
-﻿  shape.cpp
+﻿  figure.cpp
+C:\Users\niki_\source\oop_chess\chess\figure.cpp(66,11): warning C4390: ';': empty controlled statement found; is this the intent?
   chess.vcxproj -> C:\Users\niki_\source\oop_chess\chess\x64\Debug\chess.exe

@@ -3,8 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\niki_\\source\\oop_chess\\chess\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\source\\shape.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:source\\shape.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:figure.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\other.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:other.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:figure.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|C:\\Users\\niki_\\source\\oop_chess\\chess\\game.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{35694942-6213-4571-B604-175083F1AAC7}|chess\\chess.vcxproj|solutionrelative:game.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +42,110 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "shape.cpp",
-              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\source\\shape.cpp",
-              "RelativeDocumentMoniker": "source\\shape.cpp",
-              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\source\\shape.cpp",
-              "RelativeToolTip": "source\\shape.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "game.cpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\game.cpp",
+              "RelativeDocumentMoniker": "game.cpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\game.cpp",
+              "RelativeToolTip": "game.cpp",
+              "ViewState": "AgIAAC0AAAAAAAAAAADgvzcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-07T13:09:16.041Z",
+              "WhenOpened": "2026-05-08T12:58:07.905Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "figure.hpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.hpp",
+              "RelativeDocumentMoniker": "figure.hpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.hpp",
+              "RelativeToolTip": "figure.hpp",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAABEAAABgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-08T12:31:49.818Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "board.hpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\board.hpp",
+              "RelativeDocumentMoniker": "board.hpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\board.hpp",
+              "RelativeToolTip": "board.hpp",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABQAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-08T12:31:42.386Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "figure.cpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.cpp",
+              "RelativeDocumentMoniker": "figure.cpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\figure.cpp",
+              "RelativeToolTip": "figure.cpp",
+              "ViewState": "AgIAAEkAAAAAAAAAAADgv08AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-08T12:40:26.732Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "board.cpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\board.cpp",
+              "RelativeDocumentMoniker": "board.cpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\board.cpp",
+              "RelativeToolTip": "board.cpp",
+              "ViewState": "AgIAAAQAAAAAAAAAAADgvwwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-08T12:50:20.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-08T13:03:31.746Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "other.hpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\other.hpp",
+              "RelativeDocumentMoniker": "other.hpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\other.hpp",
+              "RelativeToolTip": "other.hpp",
+              "ViewState": "AgIAAAcAAAAAAAAAAADgvxAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-08T12:33:14.83Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "game.hpp",
+              "DocumentMoniker": "C:\\Users\\niki_\\source\\oop_chess\\chess\\game.hpp",
+              "RelativeDocumentMoniker": "game.hpp",
+              "ToolTip": "C:\\Users\\niki_\\source\\oop_chess\\chess\\game.hpp",
+              "RelativeToolTip": "game.hpp",
+              "ViewState": "AgIAABkAAAAAAAAAAAAAACAAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-08T12:58:15.046Z",
               "EditorCaption": ""
             }
           ]
