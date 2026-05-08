@@ -35,6 +35,16 @@ void BoardCell::moveFromCell(BoardCell& other) {
 	this->setFigure(other.fig);
 	other.setFigure(nullptr);
 }
+bool BoardCell::isFriendFigure(const Figure* other) const{
+	if (fig) {
+		if (other) 
+			return fig->getColor() == other->getColor();
+	}
+	return false;
+}
+int Board::pawnEnd(Color color)const {
+	return color == Color::BLACK ? 0 : BOARD_SIZE - 1;
+}
 void Board::initDefaultBoard() {
 	for (unsigned i = 0; i < BOARD_SIZE; i++) {
 		for (unsigned j = 0; j < BOARD_SIZE; j++) {
@@ -72,8 +82,13 @@ Board::Board(BoardCell arr[BOARD_SIZE][BOARD_SIZE]) {
 		}
 	}
 }
-
+size_t Board::getBoardSize() const{
+	return BOARD_SIZE;
+}
 BoardCell& Board::operator[](const Position& p) {
+	return arr[p.x][p.y];
+}
+const BoardCell& Board::operator[](const Position& p) const{
 	return arr[p.x][p.y];
 }
 int Board::move(Color playerColor, const Position& p1, const Position& p2) {

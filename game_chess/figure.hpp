@@ -12,24 +12,35 @@ protected:
 public:
 	//static method that returns the desired figure
 	static Figure* factory(FigureType ft, Color color);
-	Color getColor();
+	Color getColor() const;
 	unsigned getPoints()const;
 	virtual std::ostream& print(std::ostream& os) = 0;
 	//method that returns whether a figure can go to specific position, using her rules of movement
-	virtual bool canMove(Board& board, const Position& oldPos, const Position& newPos) = 0;
+	virtual bool canMove(const Board& board, const Position& oldPos, const Position& newPos) = 0;
 };
 class Pawn : public Figure {
 	bool hasMoved;
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos)override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos)override;
 	Pawn(Color figureColor);
 	std::ostream& print(std::ostream& os)override;
-
+	//this function checks if the pawn is at the end of the board, so that i t can be transformed to every other figure
+	bool canTransform(const Board& board,const Position& pos);
+};
+class StraightMovingFigure :virtual public Figure {
+public:
+	StraightMovingFigure(Color figureColor, unsigned points);
+	bool canMoveStraight(const Board& board, const Position& oldPos, const Position& newPos) ;
+};
+class DiagonallyMovingFigure : virtual public Figure {
+public:
+	DiagonallyMovingFigure(Color figureColor, unsigned points);
+	bool canMoveDiagonally(const Board& board, const Position& oldPos, const Position& newPos);
 };
 class Knight : public Figure {
 
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos) override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos) override;
 	Knight(Color figureColor);
 	std::ostream& print(std::ostream& os) override;
 
@@ -38,29 +49,28 @@ class King : public Figure {
 	bool hasMoved;
 
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos) override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos) override;
 	King(Color figureColor);
 	std::ostream& print(std::ostream& os) override;
 };
-class Bishop : public Figure {
-	bool hasMoved;
+class Bishop : public DiagonallyMovingFigure {
 
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos) override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos) override;
 	Bishop(Color figureColor);
 	std::ostream& print(std::ostream& os) override;
 };
-class Queen : public Figure {
+class Queen :  public DiagonallyMovingFigure,public StraightMovingFigure {
 
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos)override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos)override;
 	Queen(Color figureColor);
 	std::ostream& print(std::ostream& os) override;
 };
-class Rook : public Figure {
-
+class Rook : public StraightMovingFigure {
+	bool hasMoved;
 public:
-	bool canMove(Board& board, const Position& oldPos, const Position& newPos)override;
+	bool canMove(const Board& board, const Position& oldPos, const Position& newPos)override;
 	Rook(Color figureColor);
 	std::ostream& print(std::ostream& os);
 };
