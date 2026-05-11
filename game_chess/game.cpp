@@ -93,17 +93,20 @@ bool Game::isCheckmate() {
 	if (true) {
 		this->status == GameStatus::CHECKMATE;
 	}
+	return true;
 }
 bool Game::isStalemate() {
 	if (true) {
 		this->status == GameStatus::STALEMATE;
 	}
+	return true;
 }
 bool Game::isDeadPosition(){
 	if (true) {
 		//if(figureCount == 2 && kingsCount == 2)
 		this->status == GameStatus::DEAD_POSITION;
 	}
+	return true;
 }
 bool Game::isGameOver() {
 	return isCheckmate() || isStalemate() || isDeadPosition();

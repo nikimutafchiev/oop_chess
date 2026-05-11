@@ -59,6 +59,9 @@ bool Pawn::canMove(const Board& board, const Position& oldPos, const Position& n
 Pawn::Pawn(Color figureColor) :Figure(figureColor, 1), hasMoved(false) {
 
 }
+FigureType Pawn::getType()const {
+	return FigureType::PAWN;
+}
 std::ostream& Pawn::print(std::ostream& os) {
 	os << (figureColor == Color::WHITE ? "\033[33m" : "\033[34m");
 	os << "Pawn  ";
@@ -126,6 +129,9 @@ bool Knight::canMove(const Board& board, const Position& oldPos, const Position&
 	}
 	return false;
 }
+FigureType Knight::getType()const {
+	return FigureType::KNIGHT;
+}
 Knight::Knight(Color figureColor) :Figure(figureColor, 3) {
 	
 }
@@ -148,6 +154,9 @@ bool King::canMove(const Board & board, const Position & oldPos, const Position 
 		hasMoved = true;
 	return isValidMove;
 }
+FigureType King::getType()const {
+	return FigureType::KING;
+}
 King::King(Color figureColor) :Figure(figureColor,0),hasMoved(false) {
 
 }
@@ -160,6 +169,9 @@ std::ostream& King::print(std::ostream& os) {
 bool Bishop::canMove(const Board& board, const Position& oldPos, const Position& newPos)  {
 	return canMoveDiagonally(board, oldPos, newPos);
 }
+FigureType Bishop::getType()const {
+	return FigureType::BISHOP;
+}
 Bishop::Bishop(Color figureColor) :Figure(figureColor, 3),DiagonallyMovingFigure(figureColor,3) {
 	
 }
@@ -171,6 +183,9 @@ std::ostream& Bishop::print(std::ostream& os)  {
 
 bool Queen::canMove(const Board& board, const Position& oldPos, const Position& newPos) {
 	return canMoveDiagonally(board,oldPos,newPos)||canMoveStraight(board,oldPos,newPos);
+}
+FigureType Queen::getType()const {
+	return FigureType::QUEEN;
 }
 Queen::Queen(Color figureColor) :DiagonallyMovingFigure(figureColor, 9) , StraightMovingFigure(figureColor,9), Figure(figureColor, 9){
 
@@ -185,6 +200,9 @@ bool Rook::canMove(const Board & board, const Position & oldPos, const Position 
 	return canMoveStraight(board,oldPos,newPos);
 
 	//add logic for rokada
+}
+FigureType Rook::getType()const {
+	return FigureType::ROOK;
 }
 Rook::Rook(Color figureColor) :StraightMovingFigure(figureColor, 5), Figure(figureColor, 5),hasMoved(false) {
 

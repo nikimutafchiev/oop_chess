@@ -142,6 +142,16 @@ unsigned Board::getFigureCount()const {
 	}
 	return cnt;
 }
+unsigned Board::getFigureCount(FigureType ft)const {
+	unsigned cnt = 0;
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (arr[i][j].hasFigure())
+				cnt += arr[i][j].getFigure()->getType() == ft;
+		}
+	}
+	return cnt;
+}
 //need to make sure all figures are dynamically allocated
 Board::~Board() {
 	for (int i = 0; i < BOARD_SIZE; i++) {
