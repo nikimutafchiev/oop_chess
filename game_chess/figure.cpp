@@ -29,6 +29,7 @@ Color Figure::getColor() const{
 unsigned Figure::getPoints()const {
 	return points;
 }
+
 bool Pawn::canTransform(const Board&board, const Position&p) {
 	return board.pawnEnd(figureColor) == p.x;
 }
@@ -116,8 +117,8 @@ bool DiagonallyMovingFigure::canMoveDiagonally(const Board& board, const Positio
 }
 
 bool Knight::canMove(const Board& board, const Position& oldPos, const Position& newPos) {
-	int deltaX = Position::deltaX(oldPos, newPos),deltaY = Position::deltaY(oldPos, newPos);
-	if (std::abs(deltaX) == 2 && std::abs(deltaY) == 1 || std::abs(deltaX) == 1 && std::abs(deltaY) == 2) {
+	int absDeltaX = Position::absDeltaX(oldPos, newPos),absDeltaY = Position::absDeltaY(oldPos, newPos);
+	if (absDeltaX == 2 && absDeltaY == 1 || absDeltaX == 1 && absDeltaY == 2) {
 		if (board[newPos].hasFigure()) 
 			return !board[newPos].isFriendFigure(this);
 		else
@@ -136,7 +137,7 @@ std::ostream& Knight::print(std::ostream& os) {
 
 bool King::canMove(const Board & board, const Position & oldPos, const Position & newPos)  {
 	bool isValidMove = false;
-	if (std::abs(Position::deltaX(newPos,oldPos))<=1 && std::abs(Position::deltaY(newPos,oldPos))<=1) {
+	if (Position::absDeltaX(newPos,oldPos)<=1 && Position::absDeltaY(newPos,oldPos)<=1) {
 		if (board[newPos].hasFigure()) {
 			isValidMove = board[newPos].isFriendFigure(this);
 		}

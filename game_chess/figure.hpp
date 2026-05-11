@@ -17,6 +17,7 @@ public:
 	virtual std::ostream& print(std::ostream& os) = 0;
 	//method that returns whether a figure can go to specific position, using her rules of movement
 	virtual bool canMove(const Board& board, const Position& oldPos, const Position& newPos) = 0;
+	virtual FigureType getType() const = 0;
 };
 class Pawn : public Figure {
 	bool hasMoved;

@@ -4,7 +4,6 @@
 BoardCell::BoardCell(Figure* fig, Position pos, Color color) :fig(fig), pos(pos), color(color) {
 
 }
-//bug: when deleting will have problem if something is on the stack
 void BoardCell::setFigure(Figure* f) {
 	fig = f;
 }
@@ -32,6 +31,8 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 	return os;
 }
 void BoardCell::moveFromCell(BoardCell& other) {
+	if (this->fig)
+		delete this->fig;
 	this->setFigure(other.fig);
 	other.setFigure(nullptr);
 }
@@ -44,6 +45,9 @@ bool BoardCell::isFriendFigure(const Figure* other) const{
 }
 int Board::pawnEnd(Color color)const {
 	return color == Color::BLACK ? 0 : BOARD_SIZE - 1;
+}
+bool Board::isValidPosition(const Position& p)const {
+	return p.x < BOARD_SIZE && p.y < BOARD_SIZE;
 }
 void Board::initDefaultBoard() {
 	for (unsigned i = 0; i < BOARD_SIZE; i++) {
@@ -86,9 +90,13 @@ size_t Board::getBoardSize() const{
 	return BOARD_SIZE;
 }
 BoardCell& Board::operator[](const Position& p) {
+	if (!isValidPosition(p))
+		std::exit(-1);
 	return arr[p.x][p.y];
 }
 const BoardCell& Board::operator[](const Position& p) const{
+	if (!isValidPosition(p))
+		std::exit(-1);
 	return arr[p.x][p.y];
 }
 int Board::move(Color playerColor, const Position& p1, const Position& p2) {
@@ -111,7 +119,7 @@ int Board::move(Color playerColor, const Position& p1, const Position& p2) {
 std::ostream& operator<<(std::ostream& os, Board& board) {
 	os << "\n";
 	for (int i = 0; i < BOARD_SIZE; i++) {
-		os << 8 - i;
+		os << BOARD_SIZE - i;
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			os << board.arr[i][j];
 		}
@@ -124,6 +132,17 @@ std::ostream& operator<<(std::ostream& os, Board& board) {
 	os << "\n";
 	return os;
 }
+unsigned Board::getFigureCount()const {
+	unsigned cnt = 0;
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (arr[i][j].hasFigure())
+				cnt++;
+		}
+	}
+	return cnt;
+}
+//need to make sure all figures are dynamically allocated
 Board::~Board() {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {

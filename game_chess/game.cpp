@@ -39,7 +39,13 @@ Position Game::enterCoordinates() {
 	do {
 		coord.clear();
 		std::cin >> coord;
-	} while (coord[0] < 'A' || coord[0]>'H' || coord[1] < '1' || coord[1]>'8');
+		if (coord[0] < 'A' || coord[0]>'H' || coord[1] < '1' || coord[1]>'8') {
+			std::cout << "Invalid coordinates, must be (A-H)(1-8)" << std::endl;
+		}
+		else {
+			break;
+		}
+	} while (true);
 	return Position('8' - coord[1], coord[0] - 'A');
 }
 int Game::processMove(Player& p) {
@@ -49,7 +55,7 @@ int Game::processMove(Player& p) {
 	return board->move(p.getColor(), p1, p2);
 }
 void Game::play() {
-	while (status == GameStatus::IN_PLAY) {
+	while (!isGameOver()) {
 		system("cls");
 		std::cout << p[0] <<std::endl;
 		std::cout << *board<<std::endl;
@@ -82,4 +88,23 @@ Game* Game::getInstance() {
 		instance = new Game();
 	}
 	return instance;
+}
+bool Game::isCheckmate() {
+	if (true) {
+		this->status == GameStatus::CHECKMATE;
+	}
+}
+bool Game::isStalemate() {
+	if (true) {
+		this->status == GameStatus::STALEMATE;
+	}
+}
+bool Game::isDeadPosition(){
+	if (true) {
+		//if(figureCount == 2 && kingsCount == 2)
+		this->status == GameStatus::DEAD_POSITION;
+	}
+}
+bool Game::isGameOver() {
+	return isCheckmate() || isStalemate() || isDeadPosition();
 }
