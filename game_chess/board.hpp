@@ -33,7 +33,7 @@ public:
 	bool isValidPosition(const Position& p) const;
 	BoardCell& operator[](const Position& p);
 	const BoardCell& operator[](const Position& p) const;
-	int move(Color playerColor, const Position& p1, const Position& p2);
+	int move(Color playerColor, const Move&move);
 	friend std::ostream& operator<<(std::ostream& os, Board& board);
 	//the end position to which a pawn from this color can be moved
 	int pawnEnd(Color color) const;

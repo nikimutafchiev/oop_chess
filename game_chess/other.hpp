@@ -38,3 +38,7 @@ enum class FigureType {
 enum class GameStatus {
 	NOT_STARTED, IN_PLAY, STALEMATE, CHECKMATE, DEAD_POSITION
 };
+struct Move {
+	Position src;
+	Position dest;
+};

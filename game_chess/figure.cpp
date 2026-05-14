@@ -33,12 +33,14 @@ unsigned Figure::getPoints()const {
 bool Pawn::canTransform(const Board&board, const Position&p) {
 	return board.pawnEnd(figureColor) == p.x;
 }
-bool Pawn::canMove(const Board& board, const Position& oldPos, const Position& newPos) {
+bool Pawn::canMove(const Board& board, const Move& move) {
 	//determines the direction to where the pieces will be headed, depending on the figure color
 	int step = this->figureColor == Color::WHITE ? 1 : -1;
 	bool isValidMove = false;
-	int deltaX = Position::deltaX(newPos, oldPos),deltaY = Position::deltaY(newPos, oldPos);
-	if (oldPos.y == newPos.y && !board[newPos].hasFigure()) {
+	Position dest = move.dest, src = move.src;
+	int deltaX = Position::deltaX(dest, src),absDeltaY = Position::absDeltaY(dest, src);
+
+	if (src.y == dest.y && !board[dest].hasFigure()) {
 		if (deltaX ==  step) {
 			isValidMove = true;
 		}
@@ -47,13 +49,13 @@ bool Pawn::canMove(const Board& board, const Position& oldPos, const Position& n
 		}
 	}
 	//checks the NW NE move if there is a figure or not
-	else if (std::abs(deltaY) == 1 && deltaX == step)
+	else if (absDeltaY == 1 && deltaX == step)
 	{
-		if (board[newPos].hasFigure())
-			isValidMove = !board[newPos].isFriendFigure(this);
+		if (board[dest].hasFigure())
+			isValidMove = !board[dest].isFriendFigure(this);
 	}
 	if (isValidMove)
-		hasMoved = true;
+		hasMoved = true; //remove it from here
 	return isValidMove;
 }
 Pawn::Pawn(Color figureColor) :Figure(figureColor, 1), hasMoved(false) {
@@ -67,63 +69,75 @@ std::ostream& Pawn::print(std::ostream& os) {
 	os << "Pawn  ";
 	return os << "\033[0m";
 }
+void Pawn::getAllPossibleMoves(const Board& board,const Position& pos, std::vector<Move>& res) const{
+	//check all moves that can be made by pawn
+	Position dest = { pos.x + 1,pos.y };
+	if (!board[dest].hasFigure()) res.push_back(Move(pos, dest));
+	dest.x = pos.x + 2;
+	if (!board[dest].hasFigure()) res.push_back(Move(pos, dest));
+	//if (this->canMove(board, ...));
+}
 StraightMovingFigure::StraightMovingFigure(Color figureColor, unsigned points) :Figure(figureColor, points) {
 
 }
 DiagonallyMovingFigure::DiagonallyMovingFigure(Color figureColor, unsigned points) :Figure(figureColor, points) {
 
 }
-bool StraightMovingFigure::canMoveStraight(const Board& board, const Position& oldPos, const Position& newPos) {
-	int deltaX = Position::deltaX(newPos, oldPos), deltaY = Position::deltaY(newPos,oldPos);
+bool StraightMovingFigure::canMove(const Board& board, const Move& move){
+	Position src = move.src, dest = move.dest;
+	int deltaX = Position::deltaX(dest, src), deltaY = Position::deltaY(dest,src);
 	if (!deltaX && deltaY) {
 		int direction = deltaY > 0 ? 1 : -1;
-		for (int i = oldPos.y + direction; i != newPos.y; i += direction) {
-			if (board[Position(newPos.x,i)].hasFigure())
+		for (int i = src.y + direction; i != dest.y; i += direction) {
+			if (board[Position(dest.x,i)].hasFigure())
 				return false;
 		}
 	}
 	else if (deltaX && !deltaY) {
 		int direction = deltaX > 0 ? 1 : -1;
-		for (int i = oldPos.x + direction; i != newPos.x; i += direction) {
-			if (board[Position(i,newPos.y)].hasFigure())
+		for (int i = src.x + direction; i != dest.x; i += direction) {
+			if (board[Position(i,dest.y)].hasFigure())
 				return false;
 		}
 	}
-	if (board[newPos].hasFigure())
-		return !board[newPos].isFriendFigure(this);
+	if (board[dest].hasFigure())
+		return !board[dest].isFriendFigure(this);
 	return true;
 
 }
-bool DiagonallyMovingFigure::canMoveDiagonally(const Board& board, const Position& oldPos, const Position& newPos) {
-	int deltaX = Position::deltaX(newPos, oldPos), deltaY = Position::deltaY(newPos, oldPos);
+bool DiagonallyMovingFigure::canMove(const Board& board, const Move&move){
+	Position src = move.src, dest = move.dest;
+	int deltaX = Position::deltaX(dest, src), deltaY = Position::deltaY(dest, src);
 
 	int northSouthDirection = deltaX > 0 ? 1 : -1;
 	int eastWestDirection = deltaY > 0 ? 1 : -1;
 	if (!deltaX || !deltaY)
 		return false;
-	if (deltaY < 0) {
+	//TODO: bug
+	if (deltaX != deltaY) {
 		//checks if it is on the right to left diagonal
-		if (oldPos.x + oldPos.y != newPos.x + newPos.y) {
+		if (src.x + src.y != dest.x + dest.y) {
 			return false;
 		}
 	}//checks if it is on the left to right diagonal
-	else if (deltaX != deltaY) {
+	else if (src.x - dest.x != src.y - dest.y) {
 		return false;
 	}
-	for (int i = oldPos.x + northSouthDirection, j = oldPos.y + eastWestDirection; i != newPos.x; i += northSouthDirection, j += eastWestDirection) {
+	for (int i = src.x + northSouthDirection, j = src.y + eastWestDirection; i != dest.x; i += northSouthDirection, j += eastWestDirection) {
 		if (board[Position(i, j)].hasFigure())
 			return false;
 	}
-	if (board[newPos].hasFigure())
-		return !board[newPos].isFriendFigure(this);
+	if (board[dest].hasFigure())
+		return !board[dest].isFriendFigure(this);
 	return true;
 }
 
-bool Knight::canMove(const Board& board, const Position& oldPos, const Position& newPos) {
-	int absDeltaX = Position::absDeltaX(oldPos, newPos),absDeltaY = Position::absDeltaY(oldPos, newPos);
+bool Knight::canMove(const Board& board, const Move& move) {
+	Position src = move.src, dest = move.dest;
+	int absDeltaX = Position::absDeltaX(src, dest),absDeltaY = Position::absDeltaY(src,dest);
 	if (absDeltaX == 2 && absDeltaY == 1 || absDeltaX == 1 && absDeltaY == 2) {
-		if (board[newPos].hasFigure()) 
-			return !board[newPos].isFriendFigure(this);
+		if (board[dest].hasFigure()) 
+			return !board[dest].isFriendFigure(this);
 		else
 			return true;
 	}
@@ -141,11 +155,12 @@ std::ostream& Knight::print(std::ostream& os) {
 	return os << "\033[0m";
 }
 
-bool King::canMove(const Board & board, const Position & oldPos, const Position & newPos)  {
+bool King::canMove(const Board & board, const Move& move)  {
+	Position src = move.src, dest = move.dest;
 	bool isValidMove = false;
-	if (Position::absDeltaX(newPos,oldPos)<=1 && Position::absDeltaY(newPos,oldPos)<=1) {
-		if (board[newPos].hasFigure()) {
-			isValidMove = board[newPos].isFriendFigure(this);
+	if (Position::absDeltaX(dest,src)<=1 && Position::absDeltaY(dest,src)<=1) {
+		if (board[dest].hasFigure()) {
+			isValidMove = board[dest].isFriendFigure(this);
 		}
 		else
 			isValidMove = true;
@@ -166,8 +181,8 @@ std::ostream& King::print(std::ostream& os) {
 	return os << "\033[0m";
 }
 
-bool Bishop::canMove(const Board& board, const Position& oldPos, const Position& newPos)  {
-	return canMoveDiagonally(board, oldPos, newPos);
+bool Bishop::canMove(const Board& board, const Move& move)  {
+	return DiagonallyMovingFigure::canMove(board, move);
 }
 FigureType Bishop::getType()const {
 	return FigureType::BISHOP;
@@ -181,8 +196,8 @@ std::ostream& Bishop::print(std::ostream& os)  {
 	return os << "\033[0m";
 }
 
-bool Queen::canMove(const Board& board, const Position& oldPos, const Position& newPos) {
-	return canMoveDiagonally(board,oldPos,newPos)||canMoveStraight(board,oldPos,newPos);
+bool Queen::canMove(const Board& board, const Move &move) {
+	return DiagonallyMovingFigure::canMove(board, move) || StraightMovingFigure::canMove(board, move);
 }
 FigureType Queen::getType()const {
 	return FigureType::QUEEN;
@@ -196,8 +211,8 @@ std::ostream& Queen::print(std::ostream & os) {
 	return os << "\033[0m";
 }
 
-bool Rook::canMove(const Board & board, const Position & oldPos, const Position & newPos) {
-	return canMoveStraight(board,oldPos,newPos);
+bool Rook::canMove(const Board & board, const Move&move) {
+	return StraightMovingFigure::canMove(board, move);
 
 	//add logic for rokada
 }

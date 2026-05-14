@@ -52,7 +52,7 @@ int Game::processMove(Player& p) {
 	std::cout << "Enter move:" << std::endl;
 	Position p1 = enterCoordinates();
 	Position p2 = enterCoordinates();
-	return board->move(p.getColor(), p1, p2);
+	return board->move(p.getColor(), Move(p1,p2));
 }
 void Game::play() {
 	while (!isGameOver()) {
@@ -93,20 +93,20 @@ bool Game::isCheckmate() {
 	if (true) {
 		this->status == GameStatus::CHECKMATE;
 	}
-	return true;
+	return false;
 }
 bool Game::isStalemate() {
 	if (true) {
 		this->status == GameStatus::STALEMATE;
 	}
-	return true;
+	return false;
 }
 bool Game::isDeadPosition(){
 	if (true) {
 		//if(figureCount == 2 && kingsCount == 2)
 		this->status == GameStatus::DEAD_POSITION;
 	}
-	return true;
+	return false;
 }
 bool Game::isGameOver() {
 	return isCheckmate() || isStalemate() || isDeadPosition();

@@ -99,21 +99,21 @@ const BoardCell& Board::operator[](const Position& p) const{
 		std::exit(-1);
 	return arr[p.x][p.y];
 }
-int Board::move(Color playerColor, const Position& p1, const Position& p2) {
-	Figure* currentFigure = (*this)[p1].getFigure();
+int Board::move(Color playerColor, const Move&move) {
+	Figure* currentFigure = (*this)[move.src].getFigure();
 	if (!currentFigure)
 		return -1;
 	if (currentFigure->getColor() != playerColor)
 		return -1;
-	if (!currentFigure->canMove(*this, p1, p2))
+	if (!currentFigure->canMove(*this, move))
 		return -1;
 	int score = 0;
-	BoardCell& newPosCell = (*this)[p2];
+	BoardCell& newPosCell = (*this)[move.dest];
 	//it is guaranteed that if there is a figure on the new pos, it is an opponents figure
 	if (newPosCell.hasFigure()) {
 		score += newPosCell.getFigure()->getPoints();
 	}
-	newPosCell.moveFromCell((*this)[p1]);
+	newPosCell.moveFromCell((*this)[move.src]);
 	return score;
 }
 std::ostream& operator<<(std::ostream& os, Board& board) {

@@ -2,6 +2,7 @@
 #include "other.hpp"
 #include "board.hpp"
 #include <iostream>
+#include <vector>
 class Player {
 	Color color;
 	std::string name;
@@ -17,6 +18,7 @@ public:
 	void addScore(int points);
 	friend std::ostream& operator<<(std::ostream& os, const Player& p);
 	friend std::istream& operator>>(std::istream& is, Player& p);
+
 };
 //add time
 class Game {
@@ -29,11 +31,13 @@ class Game {
 	
 	Position enterCoordinates();
 	int processMove(Player& p);
+	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	void play();
 	bool isGameOver();
 	bool isStalemate();
 	bool isCheckmate();
 	bool isDeadPosition();
+	bool isCheck();
 
 	Game();
 public:
