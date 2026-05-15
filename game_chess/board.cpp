@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 void BoardCell::moveFromCell(BoardCell& other) {
 	if (this->fig)
 		delete this->fig;
-	other.fig->move();
+	other.fig->move(other.pos);
 	this->setFigure(other.fig);
 	other.setFigure(nullptr);
 }
@@ -53,26 +53,26 @@ void Board::initDefaultBoard() {
 			arr[i][j] = { nullptr, {i,j},((i + j) % 2 == 0 ? Color::BLACK : Color::WHITE) };
 		}
 	}
-	arr[0][0].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE));
-	arr[0][1].setFigure(Figure::factory(FigureType::KNIGHT, Color::WHITE));
-	arr[0][2].setFigure(Figure::factory(FigureType::BISHOP, Color::WHITE));
-	arr[0][3].setFigure(Figure::factory(FigureType::QUEEN, Color::WHITE));
-	arr[0][4].setFigure(Figure::factory(FigureType::KING, Color::WHITE));
-	arr[0][5].setFigure(Figure::factory(FigureType::BISHOP, Color::WHITE));
-	arr[0][6].setFigure(Figure::factory(FigureType::KNIGHT, Color::WHITE));
-	arr[0][7].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE));
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		arr[1][i].setFigure(Figure::factory(FigureType::PAWN, Color::WHITE));
-		arr[6][i].setFigure(Figure::factory(FigureType::PAWN, Color::BLACK));
+	arr[0][0].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE, { 0, 0 }));
+	arr[0][1].setFigure(Figure::factory(FigureType::KNIGHT, Color::WHITE, {0,1}));
+	arr[0][2].setFigure(Figure::factory(FigureType::BISHOP, Color::WHITE,{0,2}));
+	arr[0][3].setFigure(Figure::factory(FigureType::QUEEN, Color::WHITE,{0,3}));
+	arr[0][4].setFigure(Figure::factory(FigureType::KING, Color::WHITE, {0,4}));
+	arr[0][5].setFigure(Figure::factory(FigureType::BISHOP, Color::WHITE, {0,5}));
+	arr[0][6].setFigure(Figure::factory(FigureType::KNIGHT, Color::WHITE, { 0,6 }));
+	arr[0][7].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE, { 0,7 }));
+	for (unsigned i = 0; i < BOARD_SIZE; i++) {
+		arr[1][i].setFigure(Figure::factory(FigureType::PAWN, Color::WHITE,{1,i}));
+		arr[6][i].setFigure(Figure::factory(FigureType::PAWN, Color::BLACK,{1,i}));
 	}
-	arr[7][0].setFigure(Figure::factory(FigureType::ROOK, Color::BLACK));
-	arr[7][1].setFigure(Figure::factory(FigureType::KNIGHT, Color::BLACK));
-	arr[7][2].setFigure(Figure::factory(FigureType::BISHOP, Color::BLACK));
-	arr[7][3].setFigure(Figure::factory(FigureType::QUEEN, Color::BLACK));
-	arr[7][4].setFigure(Figure::factory(FigureType::KING, Color::BLACK));
-	arr[7][5].setFigure(Figure::factory(FigureType::BISHOP, Color::BLACK));
-	arr[7][6].setFigure(Figure::factory(FigureType::KNIGHT, Color::BLACK));
-	arr[7][7].setFigure(Figure::factory(FigureType::ROOK, Color::BLACK));
+	arr[7][0].setFigure(Figure::factory(FigureType::ROOK, Color::BLACK, { 7,0}));
+	arr[7][1].setFigure(Figure::factory(FigureType::KNIGHT, Color::BLACK, { 7,1 }));
+	arr[7][2].setFigure(Figure::factory(FigureType::BISHOP, Color::BLACK, { 7,2 }));
+	arr[7][3].setFigure(Figure::factory(FigureType::QUEEN, Color::BLACK, { 7,3}));
+	arr[7][4].setFigure(Figure::factory(FigureType::KING, Color::BLACK, { 7,4 }));
+	arr[7][5].setFigure(Figure::factory(FigureType::BISHOP, Color::BLACK, { 7,5 }));
+	arr[7][6].setFigure(Figure::factory(FigureType::KNIGHT, Color::BLACK, { 7,6 }));
+	arr[7][7].setFigure(Figure::factory(FigureType::ROOK, Color::BLACK, { 7,7}));
 }
 Board::Board() {
 	initDefaultBoard();
@@ -103,7 +103,7 @@ int Board::move(Color playerColor, const Move&move) {
 		return -1;
 	if (currentFigure->getColor() != playerColor)
 		return -1;
-	if (!currentFigure->canMove(*this, move))
+	if (!currentFigure->canMove(*this, move.dest))
 		return -1;
 	int score = 0;
 	BoardCell& newPosCell = (*this)[move.dest];
