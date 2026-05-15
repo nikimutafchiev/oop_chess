@@ -48,11 +48,15 @@ Position Game::enterCoordinates() {
 	} while (true);
 	return Position('8' - coord[1], coord[0] - 'A');
 }
-int Game::processMove(Player& p) {
-	std::cout << "Enter move:" << std::endl;
+Move Game::enterMove() {
+	std::cout << "Enter starting position:";
 	Position p1 = enterCoordinates();
+	std::cout << "Enter destination position:";
 	Position p2 = enterCoordinates();
-	return board->move(p.getColor(), Move(p1,p2));
+	return Move(p1, p2);
+}
+int Game::processMove(Player& p) {
+	return board->move(p.getColor(), enterMove());
 }
 void Game::play() {
 	while (!isGameOver()) {
@@ -107,8 +111,10 @@ bool Game::isStalemate() {
 }
 bool Game::isDeadPosition(){
 	if (true) {
-		//if(figureCount == 2 && kingsCount == 2)
-		this->status = GameStatus::DEAD_POSITION;
+		if (board->getFigureCount() == 2 && board->getFigureCount(FigureType::KING) == 2) {
+			this->status = GameStatus::DEAD_POSITION;
+			return true;
+		}
 	}
 	return false;
 }

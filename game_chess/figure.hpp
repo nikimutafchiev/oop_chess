@@ -13,8 +13,18 @@ protected:
 public:
 	//static method that returns the desired figure
 	static Figure* factory(FigureType ft, Color color, const Position& initial_position);
-	Color getColor() const;
-	unsigned getPoints()const;
+	Color getColor() const{
+		return figureColor;
+	};
+	unsigned getPoints() const{
+		return points;
+	}
+	bool isColor(Color c)const {
+		return figureColor == c;
+	}
+	bool isColor(const Figure *other)const {
+		return figureColor == other->figureColor;
+	}
 	virtual std::ostream& print(std::ostream& os) = 0;
 	//method that returns whether a figure can go to specific position, using her rules of movement
 	virtual bool canMove(const Board& board, const Position& dest)const = 0;
@@ -24,6 +34,7 @@ public:
 	virtual void move(const Position&pos) {
 		this->pos = pos;
 	};
+
 	virtual ~Figure() {};
 };
 class Pawn : public Figure {

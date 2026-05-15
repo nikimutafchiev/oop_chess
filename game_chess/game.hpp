@@ -30,8 +30,8 @@ class Game {
 	int turn;
 	
 	Position enterCoordinates();
+	Move enterMove();
 	int processMove(Player& p);
-	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	void play();
 	bool isGameOver();
 	bool isStalemate();

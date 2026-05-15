@@ -35,6 +35,7 @@ public:
 	const BoardCell& operator[](const Position& p) const;
 	int move(Color playerColor, const Move&move);
 	friend std::ostream& operator<<(std::ostream& os, Board& board);
+	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	//the end position to which a pawn from this color can be moved
 	int pawnDirection(Color color) const;
 	int pawnEnd(Color color) const;

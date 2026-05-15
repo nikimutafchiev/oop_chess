@@ -23,13 +23,6 @@ Figure* Figure::factory(FigureType ft, Color color, const Position&initial_posit
 	}
 	return nullptr;
 }
-Color Figure::getColor() const{
-	return figureColor;
-}
-unsigned Figure::getPoints()const {
-	return points;
-}
-
 bool Pawn::canTransform(const Board&board, const Position&p) {
 	return board.pawnEnd(figureColor) == p.x;
 }

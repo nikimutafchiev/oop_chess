@@ -37,7 +37,7 @@ void BoardCell::moveFromCell(BoardCell& other) {
 bool BoardCell::isFriendFigure(const Figure* other) const{
 	if (fig) {
 		if (other) 
-			return fig->getColor() == other->getColor();
+			return fig->isColor(other);
 	}
 	return false;
 }
@@ -63,7 +63,7 @@ void Board::initDefaultBoard() {
 	arr[0][7].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE, { 0,7 }));
 	for (unsigned i = 0; i < BOARD_SIZE; i++) {
 		arr[1][i].setFigure(Figure::factory(FigureType::PAWN, Color::WHITE,{1,i}));
-		arr[6][i].setFigure(Figure::factory(FigureType::PAWN, Color::BLACK,{1,i}));
+		arr[6][i].setFigure(Figure::factory(FigureType::PAWN, Color::BLACK,{6,i}));
 	}
 	arr[7][0].setFigure(Figure::factory(FigureType::ROOK, Color::BLACK, { 7,0}));
 	arr[7][1].setFigure(Figure::factory(FigureType::KNIGHT, Color::BLACK, { 7,1 }));
@@ -152,6 +152,17 @@ unsigned Board::getFigureCount(FigureType ft)const {
 		}
 	}
 	return cnt;
+}
+void Board::getAllPossibleMoves(Color c, std::vector<Move>& res) {
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (arr[i][j].hasFigure()) {
+				const Figure* f = arr[i][j].getFigure();
+				if (f->isColor(c))
+					f->getAllPossibleMoves(*this, res);
+			}
+		}
+	}
 }
 //need to make sure all figures are dynamically allocated
 Board::~Board() {
