@@ -2,14 +2,14 @@
 #include "game.hpp"
 
 int main() {
-	//Board b;
-	//std::vector<Move>res;
-	//b[Position(7, 1)].getFigure()->getAllPossibleMoves(b, Position(7, 1), res);
+	Board b;
+	std::vector<Move>res;
+	b[Position(7, 5)].getFigure()->getAllPossibleMoves(b, res);
 	//for (auto move : res) {
 	//	std::cout << move << std::endl;
 	//}
-	Game* g = Game::getInstance();
-	g->startGame("Ivan", "Petkan");
+	//Game* g = Game::getInstance();
+	//g->startGame("Ivan", "Petkan");
 	//
 	//Position p1(1, 1),n1(2,1),p2(6,1),n2(5,1);
 	//(*board)[p1].getFigure()->canMove(*board, p1, n1);

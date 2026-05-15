@@ -89,6 +89,10 @@ Game* Game::getInstance() {
 	}
 	return instance;
 }
+bool Game::isCheck() {
+	//for allPossibleMoves, if dest == King return true;
+	return false;
+}
 bool Game::isCheckmate() {
 	if (true) {
 		this->status = GameStatus::CHECKMATE;

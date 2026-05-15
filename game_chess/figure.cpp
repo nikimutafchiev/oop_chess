@@ -176,7 +176,20 @@ std::ostream& Knight::print(std::ostream& os) {
 	return os << "\033[0m";
 }
 void King::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const {
-
+	Position positions[] = {
+		{pos.x + 1,pos.y},
+		{pos.x + 1,pos.y - 1},
+		{pos.x + 1,pos.y + 1},
+		{ pos.x ,pos.y + 1 },
+	{ pos.x ,pos.y - 1},
+	{ pos.x - 1,pos.y - 1 },
+	{ pos.x - 1,pos.y },
+	{ pos.x - 1,pos.y + 1 }
+	};
+	for (int i = 0; i < 8; i++) {
+		if (this->canMove(board, positions[i]))
+			res.push_back(Move(pos, positions[i]));
+	}
 }
 bool King::canMove(const Board & board, const Position&dest) const {
 	if (!board.isValidPosition(dest))return false;
