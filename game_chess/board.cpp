@@ -7,9 +7,6 @@ BoardCell::BoardCell(Figure* fig, Position pos, Color color) :fig(fig), pos(pos)
 void BoardCell::setFigure(Figure* f) {
 	fig = f;
 }
-Figure* BoardCell::getFigure() {
-	return fig;
-}
 const Figure* BoardCell::getFigure() const {
 	return fig;
 }
@@ -33,6 +30,7 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 void BoardCell::moveFromCell(BoardCell& other) {
 	if (this->fig)
 		delete this->fig;
+	other.fig->move();
 	this->setFigure(other.fig);
 	other.setFigure(nullptr);
 }
@@ -100,7 +98,7 @@ const BoardCell& Board::operator[](const Position& p) const{
 	return arr[p.x][p.y];
 }
 int Board::move(Color playerColor, const Move&move) {
-	Figure* currentFigure = (*this)[move.src].getFigure();
+	const Figure* currentFigure = (*this)[move.src].getFigure();
 	if (!currentFigure)
 		return -1;
 	if (currentFigure->getColor() != playerColor)
@@ -131,6 +129,9 @@ std::ostream& operator<<(std::ostream& os, Board& board) {
 	}
 	os << "\n";
 	return os;
+}
+int Board::pawnDirection(Color color)const {
+	return color == Color::WHITE ? 1 : -1;
 }
 unsigned Board::getFigureCount()const {
 	unsigned cnt = 0;

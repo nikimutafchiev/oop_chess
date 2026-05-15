@@ -4,7 +4,7 @@
 #include "other.hpp"
 
 class BoardCell {
-
+	//unique pointer?
 	Figure* fig;
 	Position pos;
 	Color color;
@@ -12,7 +12,7 @@ public:
 	BoardCell() = default;
 	BoardCell(Figure* fig, Position pos, Color color);
 	void setFigure(Figure* f);
-	Figure* getFigure();
+//	Figure* getFigure();
 	const Figure* getFigure() const;
 	bool hasFigure() const;
 	Color getColor() const;
@@ -36,6 +36,7 @@ public:
 	int move(Color playerColor, const Move&move);
 	friend std::ostream& operator<<(std::ostream& os, Board& board);
 	//the end position to which a pawn from this color can be moved
+	int pawnDirection(Color color) const;
 	int pawnEnd(Color color) const;
 	unsigned getFigureCount() const;
 	unsigned getFigureCount(FigureType f) const;

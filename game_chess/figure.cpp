@@ -33,9 +33,10 @@ unsigned Figure::getPoints()const {
 bool Pawn::canTransform(const Board&board, const Position&p) {
 	return board.pawnEnd(figureColor) == p.x;
 }
-bool Pawn::canMove(const Board& board, const Move& move) {
+bool Pawn::canMove(const Board& board, const Move& move)const {
+	if (!board.isValidPosition(move.dest))return false;
 	//determines the direction to where the pieces will be headed, depending on the figure color
-	int step = this->figureColor == Color::WHITE ? 1 : -1;
+	int step = board.pawnDirection(this->figureColor);
 	bool isValidMove = false;
 	Position dest = move.dest, src = move.src;
 	int deltaX = Position::deltaX(dest, src),absDeltaY = Position::absDeltaY(dest, src);
@@ -54,8 +55,6 @@ bool Pawn::canMove(const Board& board, const Move& move) {
 		if (board[dest].hasFigure())
 			isValidMove = !board[dest].isFriendFigure(this);
 	}
-	if (isValidMove)
-		hasMoved = true; //remove it from here
 	return isValidMove;
 }
 Pawn::Pawn(Color figureColor) :Figure(figureColor, 1), hasMoved(false) {
@@ -71,19 +70,28 @@ std::ostream& Pawn::print(std::ostream& os) {
 }
 void Pawn::getAllPossibleMoves(const Board& board,const Position& pos, std::vector<Move>& res) const{
 	//check all moves that can be made by pawn
-	Position dest = { pos.x + 1,pos.y };
-	if (!board[dest].hasFigure()) res.push_back(Move(pos, dest));
-	dest.x = pos.x + 2;
-	if (!board[dest].hasFigure()) res.push_back(Move(pos, dest));
-	//if (this->canMove(board, ...));
+	int step = board.pawnDirection(this->figureColor);
+	Position positions[4] = { {pos.x + step, pos.y }, { pos.x + step * 2,pos.y }, { pos.x + step, pos.y + 1 }, { pos.x + step,pos.y - 1 } };
+	for (unsigned i = 0; i < 4;i++) {
+		Move move(pos, positions[i]);
+		if (this->canMove(board, move))
+			res.push_back(move);
+	}
 }
 StraightMovingFigure::StraightMovingFigure(Color figureColor, unsigned points) :Figure(figureColor, points) {
 
 }
+void StraightMovingFigure::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+	//BFS
+}
 DiagonallyMovingFigure::DiagonallyMovingFigure(Color figureColor, unsigned points) :Figure(figureColor, points) {
 
 }
-bool StraightMovingFigure::canMove(const Board& board, const Move& move){
+void DiagonallyMovingFigure::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+	//BFS
+}
+bool StraightMovingFigure::canMove(const Board& board, const Move& move)const{
+	if (!board.isValidPosition(move.dest))return false;
 	Position src = move.src, dest = move.dest;
 	int deltaX = Position::deltaX(dest, src), deltaY = Position::deltaY(dest,src);
 	if (!deltaX && deltaY) {
@@ -105,7 +113,8 @@ bool StraightMovingFigure::canMove(const Board& board, const Move& move){
 	return true;
 
 }
-bool DiagonallyMovingFigure::canMove(const Board& board, const Move&move){
+bool DiagonallyMovingFigure::canMove(const Board& board, const Move&move)const {
+	if (!board.isValidPosition(move.dest))return false;
 	Position src = move.src, dest = move.dest;
 	int deltaX = Position::deltaX(dest, src), deltaY = Position::deltaY(dest, src);
 
@@ -132,7 +141,8 @@ bool DiagonallyMovingFigure::canMove(const Board& board, const Move&move){
 	return true;
 }
 
-bool Knight::canMove(const Board& board, const Move& move) {
+bool Knight::canMove(const Board& board, const Move& move) const {
+	if (!board.isValidPosition(move.dest))return false;
 	Position src = move.src, dest = move.dest;
 	int absDeltaX = Position::absDeltaX(src, dest),absDeltaY = Position::absDeltaY(src,dest);
 	if (absDeltaX == 2 && absDeltaY == 1 || absDeltaX == 1 && absDeltaY == 2) {
@@ -142,6 +152,9 @@ bool Knight::canMove(const Board& board, const Move& move) {
 			return true;
 	}
 	return false;
+}
+void Knight::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+
 }
 FigureType Knight::getType()const {
 	return FigureType::KNIGHT;
@@ -154,8 +167,11 @@ std::ostream& Knight::print(std::ostream& os) {
 	os << "Knight";
 	return os << "\033[0m";
 }
+void King::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
 
-bool King::canMove(const Board & board, const Move& move)  {
+}
+bool King::canMove(const Board & board, const Move& move) const {
+	if (!board.isValidPosition(move.dest))return false;
 	Position src = move.src, dest = move.dest;
 	bool isValidMove = false;
 	if (Position::absDeltaX(dest,src)<=1 && Position::absDeltaY(dest,src)<=1) {
@@ -165,8 +181,6 @@ bool King::canMove(const Board & board, const Move& move)  {
 		else
 			isValidMove = true;
 	}
-	if (isValidMove)
-		hasMoved = true;
 	return isValidMove;
 }
 FigureType King::getType()const {
@@ -180,8 +194,10 @@ std::ostream& King::print(std::ostream& os) {
 	os << "King  ";
 	return os << "\033[0m";
 }
-
-bool Bishop::canMove(const Board& board, const Move& move)  {
+void Bishop::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+	DiagonallyMovingFigure::getAllPossibleMoves(board, pos, res);
+}
+bool Bishop::canMove(const Board& board, const Move& move) const {
 	return DiagonallyMovingFigure::canMove(board, move);
 }
 FigureType Bishop::getType()const {
@@ -196,14 +212,18 @@ std::ostream& Bishop::print(std::ostream& os)  {
 	return os << "\033[0m";
 }
 
-bool Queen::canMove(const Board& board, const Move &move) {
+bool Queen::canMove(const Board& board, const Move &move)const {
 	return DiagonallyMovingFigure::canMove(board, move) || StraightMovingFigure::canMove(board, move);
+}
+void Queen::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+	StraightMovingFigure::getAllPossibleMoves(board, pos, res);
+	DiagonallyMovingFigure::getAllPossibleMoves(board, pos, res);
 }
 FigureType Queen::getType()const {
 	return FigureType::QUEEN;
 }
 Queen::Queen(Color figureColor) :DiagonallyMovingFigure(figureColor, 9) , StraightMovingFigure(figureColor,9), Figure(figureColor, 9){
-
+	
 }
 std::ostream& Queen::print(std::ostream & os) {
 	os << (this->figureColor == Color::WHITE ? "\033[33m" : "\033[34m");
@@ -211,10 +231,13 @@ std::ostream& Queen::print(std::ostream & os) {
 	return os << "\033[0m";
 }
 
-bool Rook::canMove(const Board & board, const Move&move) {
+bool Rook::canMove(const Board & board, const Move&move)const {
 	return StraightMovingFigure::canMove(board, move);
 
 	//add logic for rokada
+}
+void Rook::getAllPossibleMoves(const Board& board, const Position& pos, std::vector<Move>& res) const {
+	StraightMovingFigure::getAllPossibleMoves(board, pos, res);
 }
 FigureType Rook::getType()const {
 	return FigureType::ROOK;

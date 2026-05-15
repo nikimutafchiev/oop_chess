@@ -91,20 +91,20 @@ Game* Game::getInstance() {
 }
 bool Game::isCheckmate() {
 	if (true) {
-		this->status == GameStatus::CHECKMATE;
+		this->status = GameStatus::CHECKMATE;
 	}
 	return false;
 }
 bool Game::isStalemate() {
 	if (true) {
-		this->status == GameStatus::STALEMATE;
+		this->status = GameStatus::STALEMATE;
 	}
 	return false;
 }
 bool Game::isDeadPosition(){
 	if (true) {
 		//if(figureCount == 2 && kingsCount == 2)
-		this->status == GameStatus::DEAD_POSITION;
+		this->status = GameStatus::DEAD_POSITION;
 	}
 	return false;
 }

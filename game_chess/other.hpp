@@ -27,6 +27,9 @@ struct Position {
 	static int absDeltaY(const Position& p1, const Position& p2) {
 		return abs(deltaY(p1, p2));
 	}
+	friend std::ostream& operator<<(std::ostream& os, const Position& p) {
+		return os << "(" << p.x << "," << p.y << ")";
+	}
 
 };
 enum class Color {
@@ -41,4 +44,7 @@ enum class GameStatus {
 struct Move {
 	Position src;
 	Position dest;
+	friend std::ostream& operator<<(std::ostream& os, const Move &move) {
+		return os << move.src << "->" << move.dest;
+	}
 };
