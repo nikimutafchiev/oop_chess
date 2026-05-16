@@ -21,6 +21,7 @@ public:
 	void moveFromCell(BoardCell& other);
 	//returns if the color of our figure(if there is one) is the same as the fig color
 	bool isFriendFigure(const Figure* fig) const;
+	bool isFriendColor(Color c) const;
 };
 constexpr int BOARD_SIZE = 8;
 class Board {
@@ -41,5 +42,7 @@ public:
 	int pawnEnd(Color color) const;
 	unsigned getFigureCount() const;
 	unsigned getFigureCount(FigureType f) const;
+	//recursively goes to this direction, adding the positions, that were visited until obstacle
+	void goRoute(const Position& initPos, Position currPos, int directionX, int directionY, Color enemyColor, std::vector<Move>& res)const;
 	~Board();
 };

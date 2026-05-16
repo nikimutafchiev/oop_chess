@@ -30,8 +30,8 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 void BoardCell::moveFromCell(BoardCell& other) {
 	if (this->fig)
 		delete this->fig;
-	other.fig->move(other.pos);
 	this->setFigure(other.fig);
+	fig->move(pos);
 	other.setFigure(nullptr);
 }
 bool BoardCell::isFriendFigure(const Figure* other) const{
@@ -40,6 +40,9 @@ bool BoardCell::isFriendFigure(const Figure* other) const{
 			return fig->isColor(other);
 	}
 	return false;
+}
+bool BoardCell::isFriendColor(Color c)const {
+	return this->fig->isColor(c);
 }
 int Board::pawnEnd(Color color)const {
 	return color == Color::BLACK ? 0 : BOARD_SIZE - 1;
@@ -163,6 +166,18 @@ void Board::getAllPossibleMoves(Color c, std::vector<Move>& res) {
 			}
 		}
 	}
+}
+void Board::goRoute(const Position& initPos, Position currPos, int directionX, int directionY, Color color, std::vector<Move>& res)const{
+	if (!isValidPosition(currPos))
+		return;
+	if ((*this)[currPos].hasFigure()) {
+		if (!(*this)[currPos].isFriendColor(color)) {
+			res.push_back(Move(initPos, currPos));
+		}
+		return;
+	}
+	res.push_back(Move(initPos, currPos));
+	goRoute(initPos, { currPos.x + directionX,currPos.y + directionY }, directionX, directionY, color, res);
 }
 //need to make sure all figures are dynamically allocated
 Board::~Board() {

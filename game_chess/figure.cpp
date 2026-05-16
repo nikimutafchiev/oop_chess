@@ -72,14 +72,21 @@ void Pawn::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const
 StraightMovingFigure::StraightMovingFigure(Color figureColor, const Position& pos, unsigned points) :Figure(figureColor, pos,points) {
 
 }
+//goint n, w, s, e, looking for possible moves
 void StraightMovingFigure::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const {
-	//BFS
+	board.goRoute(pos, { pos.x + 1,pos.y }, 1, 0, figureColor, res);
+	board.goRoute(pos, { pos.x - 1,pos.y }, -1, 0, figureColor, res);
+	board.goRoute(pos, { pos.x ,pos.y+1 }, 0, 1, figureColor, res);
+	board.goRoute(pos, { pos.x ,pos.y-1 }, 0, -1, figureColor, res);
 }
 DiagonallyMovingFigure::DiagonallyMovingFigure(Color figureColor, const Position& pos, unsigned points) :Figure(figureColor, pos,points) {
 
 }
 void DiagonallyMovingFigure::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const {
-	//BFS
+	board.goRoute(pos, { pos.x + 1,pos.y+1 }, 1, 1, figureColor, res);
+	board.goRoute(pos, { pos.x + 1,pos.y-1 }, 1, -1, figureColor, res);
+	board.goRoute(pos, { pos.x -1,pos.y-1 }, -1, -1, figureColor, res);
+	board.goRoute(pos, { pos.x -1,pos.y + 1}, -1, 1, figureColor, res);
 }
 bool StraightMovingFigure::canMove(const Board& board, const Position& dest)const{
 	if (!board.isValidPosition(dest))return false;
