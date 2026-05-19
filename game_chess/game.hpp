@@ -37,7 +37,8 @@ class Game {
 	bool isStalemate();
 	bool isCheckmate();
 	bool isDeadPosition();
-	bool isCheck();
+	bool isCheck(const std::vector<Move>&);
+	
 
 	Game();
 public:

@@ -4,6 +4,11 @@
 BoardCell::BoardCell(Figure* fig, Position pos, Color color) :fig(fig), pos(pos), color(color) {
 
 }
+BoardCell::BoardCell(const BoardCell& other) {
+	fig = other.fig->copy();
+	pos = other.pos;
+	color = other.color;
+}
 void BoardCell::setFigure(Figure* f) {
 	fig = f;
 }
@@ -45,14 +50,14 @@ bool BoardCell::isFriendColor(Color c)const {
 	return this->fig->isColor(c);
 }
 int Board::pawnEnd(Color color)const {
-	return color == Color::BLACK ? 0 : BOARD_SIZE - 1;
+	return color == Color::BLACK ? 0 : SIZE - 1;
 }
 bool Board::isValidPosition(const Position& p)const {
-	return p.x < BOARD_SIZE && p.y < BOARD_SIZE;
+	return p.x < SIZE && p.y < SIZE;
 }
 void Board::initDefaultBoard() {
-	for (unsigned i = 0; i < BOARD_SIZE; i++) {
-		for (unsigned j = 0; j < BOARD_SIZE; j++) {
+	for (unsigned i = 0; i < SIZE; i++) {
+		for (unsigned j = 0; j < SIZE; j++) {
 			arr[i][j] = { nullptr, {i,j},((i + j) % 2 == 0 ? Color::BLACK : Color::WHITE) };
 		}
 	}
@@ -64,7 +69,7 @@ void Board::initDefaultBoard() {
 	arr[0][5].setFigure(Figure::factory(FigureType::BISHOP, Color::WHITE, {0,5}));
 	arr[0][6].setFigure(Figure::factory(FigureType::KNIGHT, Color::WHITE, { 0,6 }));
 	arr[0][7].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE, { 0,7 }));
-	for (unsigned i = 0; i < BOARD_SIZE; i++) {
+	for (unsigned i = 0; i < SIZE; i++) {
 		arr[1][i].setFigure(Figure::factory(FigureType::PAWN, Color::WHITE,{1,i}));
 		arr[6][i].setFigure(Figure::factory(FigureType::PAWN, Color::BLACK,{6,i}));
 	}
@@ -80,15 +85,23 @@ void Board::initDefaultBoard() {
 Board::Board() {
 	initDefaultBoard();
 }
-Board::Board(BoardCell arr[BOARD_SIZE][BOARD_SIZE]) {
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
+Board::Board(BoardCell arr[SIZE][SIZE]) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			this->arr[i][j] = arr[i][j];
 		}
 	}
 }
+Board::Board(const Board& other) {
+	this->moves = other.moves;
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			this->arr[i][j] = other.arr[i][j];
+		}
+	}
+}
 size_t Board::getBoardSize() const{
-	return BOARD_SIZE;
+	return SIZE;
 }
 BoardCell& Board::operator[](const Position& p) {
 	if (!isValidPosition(p))
@@ -119,15 +132,15 @@ int Board::move(Color playerColor, const Move&move) {
 }
 std::ostream& operator<<(std::ostream& os, Board& board) {
 	os << "\n";
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		os << BOARD_SIZE - i;
-		for (int j = 0; j < BOARD_SIZE; j++) {
+	for (int i = 0; i < board.SIZE; i++) {
+		os << board.SIZE - i;
+		for (int j = 0; j < board.SIZE; j++) {
 			os << board.arr[i][j];
 		}
 		os << "\n";
 	}
 	os << " ";
-	for (int i = 0; i < BOARD_SIZE; i++) {
+	for (int i = 0; i < board.SIZE; i++) {
 		os << (char)(i + 'A') << "     ";
 	}
 	os << "\n";
@@ -138,8 +151,8 @@ int Board::pawnDirection(Color color)const {
 }
 unsigned Board::getFigureCount()const {
 	unsigned cnt = 0;
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			if (arr[i][j].hasFigure())
 				cnt++;
 		}
@@ -148,8 +161,8 @@ unsigned Board::getFigureCount()const {
 }
 unsigned Board::getFigureCount(FigureType ft)const {
 	unsigned cnt = 0;
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			if (arr[i][j].hasFigure())
 				cnt += arr[i][j].getFigure()->getType() == ft;
 		}
@@ -157,8 +170,8 @@ unsigned Board::getFigureCount(FigureType ft)const {
 	return cnt;
 }
 void Board::getAllPossibleMoves(Color c, std::vector<Move>& res) {
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			if (arr[i][j].hasFigure()) {
 				const Figure* f = arr[i][j].getFigure();
 				if (f->isColor(c))
@@ -179,10 +192,24 @@ void Board::goRoute(const Position& initPos, Position currPos, int directionX, i
 	res.push_back(Move(initPos, currPos));
 	goRoute(initPos, { currPos.x + directionX,currPos.y + directionY }, directionX, directionY, color, res);
 }
+//this should always return valid position, because if not the game will be finished
+Position Board::getKingPosition(Color c) {
+	for (unsigned i = 0; i < SIZE; i++) {
+		for (unsigned j = 0; j < SIZE; j++) {
+			if (arr[i][j].hasFigure()) {
+				const Figure* f = arr[i][j].getFigure();
+				if (f->getColor() == c && f->getType() == FigureType::KING) {
+					return { i,j };
+				}
+			}
+		}
+	}
+	throw "There is no king of this color";
+}
 //need to make sure all figures are dynamically allocated
 Board::~Board() {
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			if (arr[i][j].hasFigure())
 				delete arr[i][j].getFigure();
 		}

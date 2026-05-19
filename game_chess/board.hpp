@@ -11,6 +11,8 @@ class BoardCell {
 public:
 	BoardCell() = default;
 	BoardCell(Figure* fig, Position pos, Color color);
+	BoardCell(const BoardCell& other);
+	BoardCell& operator=(const BoardCell& other);
 	void setFigure(Figure* f);
 //	Figure* getFigure();
 	const Figure* getFigure() const;
@@ -23,13 +25,15 @@ public:
 	bool isFriendFigure(const Figure* fig) const;
 	bool isFriendColor(Color c) const;
 };
-constexpr int BOARD_SIZE = 8;
 class Board {
-	BoardCell arr[BOARD_SIZE][BOARD_SIZE];
+	static constexpr int SIZE = 8;
+	BoardCell arr[SIZE][SIZE];
 	void initDefaultBoard();
+	std::vector<Move> moves;
 public:
 	Board();
-	Board(BoardCell arr[BOARD_SIZE][BOARD_SIZE]);
+	Board(BoardCell arr[SIZE][SIZE]);
+	Board(const Board& other);
 	size_t getBoardSize()const;
 	bool isValidPosition(const Position& p) const;
 	BoardCell& operator[](const Position& p);
@@ -44,5 +48,8 @@ public:
 	unsigned getFigureCount(FigureType f) const;
 	//recursively goes to this direction, adding the positions, that were visited until obstacle
 	void goRoute(const Position& initPos, Position currPos, int directionX, int directionY, Color enemyColor, std::vector<Move>& res)const;
+	void undoMove();
+	//gets the position of c colored king/used for check logic
+	Position getKingPosition(Color c);
 	~Board();
 };

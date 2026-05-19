@@ -93,14 +93,38 @@ Game* Game::getInstance() {
 	}
 	return instance;
 }
-bool Game::isCheck() {
+bool Game::isCheck(const std::vector<Move>& moves) {
+	Position kingPosition = board->getKingPosition(p[turn].getColor());
+	for (Move move : moves) {
+		if ((*board)[move.dest].hasFigure() && move.dest == kingPosition) {
+			return true;
+		}
+	}
 	//for allPossibleMoves, if dest == King return true;
 	return false;
 }
+//first we get the all possible moves of our opponent and determine is our king at danger, after that we move the king to all its possible moves and check again
 bool Game::isCheckmate() {
-	if (true) {
-		this->status = GameStatus::CHECKMATE;
+	std::vector<Move> possibleMoves;
+	//gets all the possible nexr moves for the other player, to determine are we in check
+	//colors in variable /todo
+	board->getAllPossibleMoves(p[turn^1].getColor(), possibleMoves);
+	Position kingPosition = board->getKingPosition(p[turn].getColor());
+	if (isCheck(possibleMoves)) {
+		std::vector<Move> kingMoves;
+		(*board)[kingPosition].getFigure()->getAllPossibleMoves(*board, kingMoves);
+		Board copy(*board);
+		for (Move move : kingMoves) {
+			possibleMoves.clear();
+			copy.move(p[turn].getColor(), move);
+			copy.getAllPossibleMoves(p[turn ^ 1].getColor(), possibleMoves);
+			copy.undoMove();
+			if (!isCheck(possibleMoves))
+				return false;
+		}
+		return true;
 	}
+	return false;
 	return false;
 }
 bool Game::isStalemate() {
@@ -110,11 +134,10 @@ bool Game::isStalemate() {
 	return false;
 }
 bool Game::isDeadPosition(){
-	if (true) {
-		if (board->getFigureCount() == 2 && board->getFigureCount(FigureType::KING) == 2) {
-			this->status = GameStatus::DEAD_POSITION;
-			return true;
-		}
+
+	if (board->getFigureCount() == 2 && board->getFigureCount(FigureType::KING) == 2) {
+		this->status = GameStatus::DEAD_POSITION;
+		return true;
 	}
 	return false;
 }
