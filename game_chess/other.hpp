@@ -30,6 +30,12 @@ struct Position {
 	friend std::ostream& operator<<(std::ostream& os, const Position& p) {
 		return os << "(" << p.x << "," << p.y << ")";
 	}
+	bool operator==(const Position& other) {
+		return other.x == x && other.y == y;
+	}
+	bool operator!=(const Position& other) {
+		return !this->operator==(other);
+	}
 
 };
 enum class Color {
