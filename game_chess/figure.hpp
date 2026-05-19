@@ -13,6 +13,7 @@ protected:
 public:
 	//static method that returns the desired figure
 	static Figure* factory(FigureType ft, Color color, const Position& initial_position);
+	virtual Figure* copy()const = 0;
 	Color getColor() const{
 		return figureColor;
 	};
@@ -51,6 +52,9 @@ public:
 		this->pos = pos;
 		hasMoved = true;
 	}
+	Figure* copy()const {
+		return new Pawn(*this);
+	}
 };
 
 class StraightMovingFigure :virtual public Figure {
@@ -78,6 +82,9 @@ public:
 	Knight(Color figureColor, const Position& pos);
 	std::ostream& print(std::ostream& os) override;
 	FigureType getType() const override;
+	Figure* copy()const {
+		return new Knight(*this);
+	}
 };
 class King : public Figure {
 	bool hasMoved;
@@ -92,6 +99,9 @@ public:
 		this->pos = pos;
 		hasMoved = true;
 	}
+	Figure* copy()const {
+		return new King(*this);
+	}
 };
 class Bishop : public DiagonallyMovingFigure {
 
@@ -101,6 +111,9 @@ public:
 	Bishop(Color figureColor, const Position& pos);
 	std::ostream& print(std::ostream& os) override;
 	FigureType getType() const override;
+	Figure* copy()const {
+		return new Bishop(*this);
+	}
 };
 class Queen :  public DiagonallyMovingFigure,public StraightMovingFigure {
 
@@ -110,6 +123,9 @@ public:
 	Queen(Color figureColor, const Position& pos);
 	std::ostream& print(std::ostream& os) override;
 	FigureType getType() const override;
+	Figure* copy()const {
+		return new Queen(*this);
+	}
 };
 class Rook : public StraightMovingFigure {
 	bool hasMoved;
@@ -122,5 +138,8 @@ public:
 	void move(const Position&pos) override{
 		this->pos = pos;
 		hasMoved = true;
+	}
+	Figure* copy()const {
+		return new Rook(*this);
 	}
 };
