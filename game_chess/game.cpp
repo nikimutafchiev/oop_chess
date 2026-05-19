@@ -118,7 +118,7 @@ bool Game::isCheckmate() {
 			possibleMoves.clear();
 			copy.move(p[turn].getColor(), move);
 			copy.getAllPossibleMoves(p[turn ^ 1].getColor(), possibleMoves);
-			copy.undoMove();
+			//copy.undoMove();
 			if (!isCheck(possibleMoves))
 				return false;
 		}
@@ -142,5 +142,5 @@ bool Game::isDeadPosition(){
 	return false;
 }
 bool Game::isGameOver() {
-	return isCheckmate() || isStalemate() || isDeadPosition();
+	return isStalemate() || isDeadPosition();
 }

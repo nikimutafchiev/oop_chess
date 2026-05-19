@@ -127,16 +127,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\bishop.cpp" />
     <ClCompile Include="..\board.cpp" />
+    <ClCompile Include="..\diagonally_moving_figure.cpp" />
     <ClCompile Include="..\figure.cpp" />
     <ClCompile Include="..\game.cpp" />
+    <ClCompile Include="..\king.cpp" />
+    <ClCompile Include="..\knight.cpp" />
     <ClCompile Include="..\main.cpp" />
+    <ClCompile Include="..\pawn.cpp" />
+    <ClCompile Include="..\queen.cpp" />
+    <ClCompile Include="..\rook.cpp" />
+    <ClCompile Include="..\straight_moving_figure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bishop.hpp" />
     <ClInclude Include="..\board.hpp" />
+    <ClInclude Include="..\diagonally_moving_figure.hpp" />
     <ClInclude Include="..\figure.hpp" />
     <ClInclude Include="..\game.hpp" />
+    <ClInclude Include="..\king.hpp" />
+    <ClInclude Include="..\knight.hpp" />
     <ClInclude Include="..\other.hpp" />
+    <ClInclude Include="..\pawn.hpp" />
+    <ClInclude Include="..\queen.hpp" />
+    <ClInclude Include="..\rook.hpp" />
+    <ClInclude Include="..\straight_moving_figure.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

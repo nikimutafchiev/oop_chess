@@ -12,7 +12,7 @@ public:
 	BoardCell() = default;
 	BoardCell(Figure* fig, Position pos, Color color);
 	BoardCell(const BoardCell& other);
-	BoardCell& operator=(const BoardCell& other);
+	//BoardCell& operator=(const BoardCell& other);
 	void setFigure(Figure* f);
 //	Figure* getFigure();
 	const Figure* getFigure() const;
