@@ -2,6 +2,7 @@
 #include "board.hpp"
 #include "pawn.hpp"
 #include "board_cell.hpp"
+#include "player.hpp"
 
 int Board::promotionRank(Color color)const {
 	return color == Color::BLACK ? 0 : SIZE - 1;
@@ -76,9 +77,10 @@ bool Board::canMove(Color playerColor, const Move& move, const Figure* figure) {
 		return false;
 	return true;
 }
-int Board::move(Color playerColor, const Move&move) {
+int Board::move(const Player &player, const Move&move) {
 	const Figure* currentFigure = (*this)[move.src].getFigure();
-	if (!canMove(playerColor, move, currentFigure))
+	Color playerColor = player.getColor();
+	if (!canMove(player.getColor(), move, currentFigure))
 		return -1;
 	int score = 0;
 	BoardCell& newPosCell = (*this)[move.dest];
@@ -88,7 +90,14 @@ int Board::move(Color playerColor, const Move&move) {
 	}
 	
 	newPosCell.moveFromCell((*this)[move.src], move.dest);
-	moves.push_back(std::pair(playerColor,move));
+	moves.push_back(std::pair(player, move));
+	if (player.isChecked) {
+		if (isCheck(playerColor)) {
+			undoLastMove();
+			std::cout << "King is still in check" << std::endl;
+			return -1;
+		}
+	}
 	//not so important for now
 	//if (currentFigure->getType() == FigureType::PAWN && ((Pawn*)currentFigure)->canTransform(boae)) {
 	//}
@@ -170,13 +179,25 @@ Position Board::getKingPosition(Color c) {
 	}
 	throw "There is no king of this color";
 }
-void Board::undoMove() {
-	if (!moves.empty()) {
-		std::pair last = moves.back();
-		Move lastMove = last.second;
-		move(last.first,Move(lastMove.dest,lastMove.src));
-	}
+bool Board::isCheck(Color c) {
+	std::vector<Move> possibleOpponentMoves;
+	getAllPossibleMoves(!c, possibleOpponentMoves);
+	Position kingPosition = getKingPosition(c);
 
+	for (Move move : possibleOpponentMoves) {
+		if ((*this)[move.dest].hasFigure() && move.dest == kingPosition) {
+			return true;
+		}
+	}
+	return false;
+}
+void Board::undoLastMove() {
+	if (!moves.empty()) {
+		std::pair<Player,Move> last = moves.back();
+		moves.pop_back();
+		Move lastMove = last.second;
+		(*this)[lastMove.src].moveFromCell((*this)[lastMove.dest], lastMove.src);
+	}
 }
 void Board::serialize(std::ostream& os) const {
 	for (int i = 0; i < SIZE; i++) {

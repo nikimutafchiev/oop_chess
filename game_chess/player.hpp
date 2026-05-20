@@ -6,7 +6,10 @@ class Player {
 	Color color;
 	std::string name;
 	int score;
+	
 public:
+
+	bool isChecked;
 	Player();
 	Player(Color color, std::string name);
 	Color getColor()const;

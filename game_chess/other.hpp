@@ -58,14 +58,32 @@ struct Position {
 
 };
 enum class Color {
-	BLACK, WHITE
+	BLACK = 0, WHITE
 };
+inline Color operator!(Color c) {
+	return Color::WHITE == c ? Color::BLACK : Color::WHITE;
+}
 enum class FigureType {
 	PAWN, ROOK, KNIGHT, QUEEN, KING, BISHOP
 };
 enum class GameStatus {
 	NOT_STARTED, IN_PLAY, STALEMATE, CHECKMATE, DEAD_POSITION
 };
+inline std::ostream& operator<<(std::ostream& os, const GameStatus& status) {
+	switch (status) {
+	case GameStatus::NOT_STARTED:
+		return os << "Not Started";
+	case GameStatus::IN_PLAY:
+		return os << "In Play";
+	case GameStatus::STALEMATE:
+		return os << "Stalemate";
+	case GameStatus::CHECKMATE:
+		return os << "Checkmate";
+	case GameStatus::DEAD_POSITION:
+		return os << "Dead Position";
+	}
+	return os;
+}
 struct Move {
 	Position src;
 	Position dest;

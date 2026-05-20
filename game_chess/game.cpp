@@ -52,17 +52,18 @@ int Game::enterOption()const {
 	return option;
 }
 int Game::processMove(Player& p) {
-	return board->move(p.getColor(), enterMove());
+	return board->move(p, enterMove());
 }
 void Game::play() {
 	status = GameStatus::IN_PLAY;
 
 	while (!isGameOver()) {
-		//system("cls");
+		system("cls");
 		std::cout << p[0] <<std::endl;
 		std::cout << *board<<std::endl;
 		std::cout << p[1] << std::endl;
 		std::cout << p[turn].getName() << "'s turn\n";
+		std::cout << (p[turn].isChecked ? "CHECK" : "") << std::endl;
 		
 		int score = 0;
 		
@@ -73,6 +74,7 @@ void Game::play() {
 		p[turn ^ 1].addScore(-score);
 		turn ^= 1;
 	}
+	std::cout << status;
 }
 
 void Game::start() {
@@ -101,7 +103,8 @@ void Game::start() {
 			}
 			break;
 		case 3:
-			delete board;
+			if(board)
+				delete board;
 			board = nullptr;
 			return;
 	}
@@ -115,36 +118,32 @@ Game* Game::getInstance() {
 	}
 	return instance;
 }
-bool Game::isCheck(const std::vector<Move>& moves) {
-	Position kingPosition = board->getKingPosition(p[turn].getColor());
-	for (Move move : moves) {
-		if ((*board)[move.dest].hasFigure() && move.dest == kingPosition) {
-			return true;
-		}
-	}
-	return false;
-}
+
 //first we get the all possible moves of our opponent and determine is our king at danger, after that we move the king to all its possible moves and check again
 bool Game::isCheckmate() {
-	std::vector<Move> possibleMoves;
 	//gets all the possible nexr moves for the other player, to determine are we in check
 	//colors in variable /todo
-	board->getAllPossibleMoves(p[turn^1].getColor(), possibleMoves);
-	Position kingPosition = board->getKingPosition(p[turn].getColor());
-	if (isCheck(possibleMoves)) {
-		std::vector<Move> kingMoves;
-		(*board)[kingPosition].getFigure()->getAllPossibleMoves(*board, kingMoves);
+	Color playerColor = p[turn].getColor();
+	bool isChecked = board->isCheck(playerColor);
+	if (isChecked) {
+		std::vector<Move> moves;
+		
 		Board copy(*board);
-		for (Move move : kingMoves) {
-			possibleMoves.clear();
-			copy.move(p[turn].getColor(), move);
-			copy.getAllPossibleMoves(p[turn ^ 1].getColor(), possibleMoves);
-			copy.undoMove();
-			if (!isCheck(possibleMoves))
+		copy.getAllPossibleMoves(playerColor, moves);
+		for (Move move : moves) {
+			copy.move(p[turn], move);
+			
+			if (!copy.isCheck(playerColor)) {
+				p[turn].isChecked = true;
 				return false;
+			}
+			
+			copy.undoLastMove();
 		}
+		p[turn].isChecked = true;
 		return true;
 	}
+	p[turn].isChecked = false;
 	return false;
 }
 bool Game::isStalemate() {

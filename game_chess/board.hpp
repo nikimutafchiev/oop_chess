@@ -3,11 +3,12 @@
 #include "figure.hpp"
 #include "other.hpp"
 #include "board_cell.hpp"
+#include "player.hpp"
 class Board {
 	static constexpr int SIZE = 8;
 	BoardCell arr[SIZE][SIZE];
 	void initDefaultBoard();
-	std::vector<std::pair<Color,Move>> moves;
+	std::vector<std::pair<Player,Move>> moves;
 public:
 	Board();
 	Board(BoardCell arr[SIZE][SIZE]);
@@ -19,7 +20,7 @@ public:
 	BoardCell& operator[](const Position& p);
 	const BoardCell& operator[](const Position& p) const;
 	bool canMove(Color playerColor, const Move& move,const Figure* figure);
-	int move(Color playerColor, const Move&move);
+	int move(const Player& player, const Move&move);
 	friend std::ostream& operator<<(std::ostream& os, Board& board);
 	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	//gets the direction of the colored pawn on the board
@@ -30,10 +31,11 @@ public:
 	unsigned getFigureCount(FigureType f) const;
 	//recursively goes to this direction, adding the positions, that were visited until obstacle
 	void goRoute(const Position& initPos, Position currPos, int directionX, int directionY, Color enemyColor, std::vector<Move>& res)const;
-	void undoMove();
+	void undoLastMove();
 	//gets the position of c colored king/used for check logic
 	Position getKingPosition(Color c);
 	void serialize(std::ostream& os) const;
 	void deserialize(std::istream& is);
+	bool isCheck(Color c);
 	~Board();
 };

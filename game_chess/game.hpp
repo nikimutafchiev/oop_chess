@@ -1,9 +1,7 @@
 #pragma once
-#include "other.hpp"
 #include "board.hpp"
 #include <iostream>
 #include <vector>
-#include "player.hpp"
 //add time
 class Game {
 	Board* board;
@@ -22,7 +20,6 @@ class Game {
 	bool isStalemate();
 	bool isCheckmate();
 	bool isDeadPosition();
-	bool isCheck(const std::vector<Move>&);
 	
 
 	Game();
