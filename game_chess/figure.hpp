@@ -12,6 +12,7 @@ protected:
 	Position pos;
 public:
 	//static method that returns the desired figure
+	static Figure* factory(FigureType ft);
 	static Figure* factory(FigureType ft, Color color, const Position& initial_position);
 	virtual Figure* copy()const = 0;
 	Color getColor() const{
@@ -34,8 +35,8 @@ public:
 	virtual void move(const Position&pos) {
 		this->pos = pos;
 	};
-	//virtual void serialize(std::ostream& os) = 0;
-	//virtual void deserialize(std::istream& is) = 0;
+	virtual void serialize(std::ostream& os) const = 0;
+	virtual void deserialize(std::istream& is) = 0;
 	virtual ~Figure() {};
 };
 

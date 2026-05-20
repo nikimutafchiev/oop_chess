@@ -16,6 +16,8 @@ public:
 		this->pos = pos;
 		hasMoved = true;
 	}
+	void serialize(std::ostream& os)const override;
+	void deserialize(std::istream& is)override;
 	Figure* copy()const {
 		return new King(*this);
 	}

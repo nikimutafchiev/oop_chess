@@ -1,55 +1,9 @@
 #include <iostream>
 #include "board.hpp"
+#include "pawn.hpp"
+#include "board_cell.hpp"
 
-BoardCell::BoardCell(Figure* fig, Position pos, Color color) :fig(fig), pos(pos), color(color) {
-
-}
-BoardCell::BoardCell(const BoardCell& other) {
-	fig = other.fig->copy();
-	pos = other.pos;
-	color = other.color;
-}
-void BoardCell::setFigure(Figure* f) {
-	fig = f;
-}
-const Figure* BoardCell::getFigure() const {
-	return fig;
-}
-bool BoardCell::hasFigure() const {
-	return fig != nullptr;
-}
-Color BoardCell::getColor() const {
-	return color;
-}
-std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
-	os << (bc.color == Color::WHITE ? "\033[47m" : "");
-	if (bc.fig == nullptr) {
-		os << "      ";
-	}
-	else {
-		bc.fig->print(os);
-	}
-	os << "\033[0m";
-	return os;
-}
-void BoardCell::moveFromCell(BoardCell& other) {
-	if (this->fig)
-		delete this->fig;
-	this->setFigure(other.fig);
-	fig->move(pos);
-	other.setFigure(nullptr);
-}
-bool BoardCell::isFriendFigure(const Figure* other) const{
-	if (fig) {
-		if (other) 
-			return fig->isColor(other);
-	}
-	return false;
-}
-bool BoardCell::isFriendColor(Color c)const {
-	return this->fig->isColor(c);
-}
-int Board::pawnEnd(Color color)const {
+int Board::promotionRank(Color color)const {
 	return color == Color::BLACK ? 0 : SIZE - 1;
 }
 bool Board::isValidPosition(const Position& p)const {
@@ -58,7 +12,7 @@ bool Board::isValidPosition(const Position& p)const {
 void Board::initDefaultBoard() {
 	for (unsigned i = 0; i < SIZE; i++) {
 		for (unsigned j = 0; j < SIZE; j++) {
-			arr[i][j] = { nullptr, {i,j},((i + j) % 2 == 0 ? Color::BLACK : Color::WHITE) };
+			arr[i][j] = { nullptr,((i + j) % 2 == 0 ? Color::BLACK : Color::WHITE) };
 		}
 	}
 	arr[0][0].setFigure(Figure::factory(FigureType::ROOK, Color::WHITE, { 0, 0 }));
@@ -113,13 +67,18 @@ const BoardCell& Board::operator[](const Position& p) const{
 		std::exit(-1);
 	return arr[p.x][p.y];
 }
+bool Board::canMove(Color playerColor, const Move& move, const Figure* figure) {
+	if (!figure)
+		return false;
+	if (figure->getColor() != playerColor)
+		return false;
+	if (!figure->canMove(*this, move.dest))
+		return false;
+	return true;
+}
 int Board::move(Color playerColor, const Move&move) {
 	const Figure* currentFigure = (*this)[move.src].getFigure();
-	if (!currentFigure)
-		return -1;
-	if (currentFigure->getColor() != playerColor)
-		return -1;
-	if (!currentFigure->canMove(*this, move.dest))
+	if (!canMove(playerColor, move, currentFigure))
 		return -1;
 	int score = 0;
 	BoardCell& newPosCell = (*this)[move.dest];
@@ -127,7 +86,12 @@ int Board::move(Color playerColor, const Move&move) {
 	if (newPosCell.hasFigure()) {
 		score += newPosCell.getFigure()->getPoints();
 	}
-	newPosCell.moveFromCell((*this)[move.src]);
+	
+	newPosCell.moveFromCell((*this)[move.src], move.dest);
+	moves.push_back(std::pair(playerColor,move));
+	//not so important for now
+	//if (currentFigure->getType() == FigureType::PAWN && ((Pawn*)currentFigure)->canTransform(boae)) {
+	//}
 	return score;
 }
 std::ostream& operator<<(std::ostream& os, Board& board) {
@@ -205,6 +169,29 @@ Position Board::getKingPosition(Color c) {
 		}
 	}
 	throw "There is no king of this color";
+}
+void Board::undoMove() {
+	if (!moves.empty()) {
+		std::pair last = moves.back();
+		Move lastMove = last.second;
+		move(last.first,Move(lastMove.dest,lastMove.src));
+	}
+
+}
+void Board::serialize(std::ostream& os) const {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			arr[i][j].serialize(os);
+			os << "\n";
+		}
+	}
+}
+void Board::deserialize(std::istream& is) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			arr[i][j].deserialize(is);
+		}
+	}
 }
 //need to make sure all figures are dynamically allocated
 Board::~Board() {

@@ -40,3 +40,17 @@ std::ostream& Knight::print(std::ostream& os) {
 	os << "Knight";
 	return os << "\033[0m";
 }
+void Knight::serialize(std::ostream& os)const {
+	os << "[Knight] " << (figureColor == Color::WHITE ? "w" : "b") << " " << pos;
+}
+void Knight::deserialize(std::istream& is) {
+	char c;
+	is >> c;
+	if (c == 'w') {
+		figureColor = Color::WHITE;
+	}
+	else if (c == 'b') {
+		figureColor = Color::BLACK;
+	}
+	is >> pos;
+}

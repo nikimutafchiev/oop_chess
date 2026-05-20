@@ -1,0 +1,64 @@
+b [Rook] w (0,0) 0
+w [Knight] w (0,1)
+b [Bishop] w (0,2)
+w [Queen] w (0,3)
+b [King] w (0,4) 0
+w [Bishop] w (0,5)
+b [Knight] w (0,6)
+w [Rook] w (0,7) 0
+w [Pawn] w (1,0) 0
+b [Pawn] w (1,1) 0
+w [Pawn] w (1,2) 0
+b [Empty]
+w [Pawn] w (1,4) 0
+b [Pawn] w (1,5) 0
+w [Pawn] w (1,6) 0
+b [Pawn] w (1,7) 0
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Pawn] w (3,3) 1
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Empty]
+b [Empty]
+w [Pawn] b (5,6) 1
+b [Empty]
+b [Pawn] b (6,0) 0
+w [Pawn] b (6,1) 0
+b [Pawn] b (6,2) 0
+w [Pawn] b (6,3) 0
+b [Pawn] b (6,4) 0
+w [Pawn] b (6,5) 0
+b [Empty]
+w [Pawn] b (6,7) 0
+w [Rook] b (7,0) 0
+b [Knight] b (7,1)
+w [Bishop] f (7,2)
+b [Queen] b (7,3)
+w [King] b (7,4) 0
+b [Bishop] f (7,5)
+w [Knight] b (7,6)
+b [Rook] b (7,7) 0

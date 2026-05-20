@@ -18,3 +18,18 @@ std::ostream& Rook::print(std::ostream& os) {
 	os << "Rook  ";
 	return os << "\033[0m";
 }
+void Rook::serialize(std::ostream& os)const {
+	os << "[Rook] " << (figureColor == Color::WHITE ? "w" : "b") << " " << pos << " " << hasMoved;
+}
+void Rook::deserialize(std::istream& is) {
+	char c;
+	is >> c;
+	if (c == 'w') {
+		figureColor = Color::WHITE;
+	}
+	else if (c == 'b') {
+		figureColor = Color::BLACK;
+	}
+	is >> pos;
+	is >> hasMoved;
+}

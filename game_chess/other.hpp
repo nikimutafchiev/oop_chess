@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 struct Position {
 	unsigned x;
 	unsigned y;
@@ -29,6 +30,24 @@ struct Position {
 	}
 	friend std::ostream& operator<<(std::ostream& os, const Position& p) {
 		return os << "(" << p.x << "," << p.y << ")";
+	}
+	friend std::istream& operator>>(std::istream& is, Position& p) {
+		char c;
+		is >> c;
+		if (c != '(') {
+			throw "Unexpected character, expected (";
+		}
+		is >> p.x;
+		is >> c;
+		if (c != ',') {
+			throw "Unexpected character, expected ,";
+		}
+		is >> p.y;
+		is >> c;
+		if (c != ')') {
+			throw "Unexpected character, expected )";
+		}
+		return is;
 	}
 	bool operator==(const Position& other) {
 		return other.x == x && other.y == y;

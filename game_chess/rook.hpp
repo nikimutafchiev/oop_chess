@@ -17,4 +17,6 @@ public:
 	Figure* copy()const {
 		return new Rook(*this);
 	}
+	void serialize(std::ostream& os)const override;
+	void deserialize(std::istream& is)override;
 };

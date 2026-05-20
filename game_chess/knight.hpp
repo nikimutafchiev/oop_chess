@@ -13,4 +13,6 @@ public:
 	Figure* copy()const {
 		return new Knight(*this);
 	}
+	void serialize(std::ostream& os)const override;
+	void deserialize(std::istream& is)override;
 };

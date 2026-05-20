@@ -38,3 +38,18 @@ std::ostream& King::print(std::ostream& os) {
 	os << "King  ";
 	return os << "\033[0m";
 }
+void King::serialize(std::ostream& os)const {
+	os << "[King] " << (figureColor == Color::WHITE ? "w" : "b") << " " << pos << " " << hasMoved;
+}
+void King::deserialize(std::istream& is) {
+	char c;
+	is >> c;
+	if (c == 'w') {
+		figureColor = Color::WHITE;
+	}
+	else if (c == 'b') {
+		figureColor = Color::BLACK;
+	}
+	is >> pos;
+	is >> hasMoved;
+}

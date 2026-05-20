@@ -19,3 +19,17 @@ std::ostream& Queen::print(std::ostream& os) {
 	os << "Queen ";
 	return os << "\033[0m";
 }
+void Queen::serialize(std::ostream& os)const {
+	os << "[Queen] " << (figureColor == Color::WHITE ? "w" : "b") << " " << pos;
+}
+void Queen::deserialize(std::istream& is) {
+	char c;
+	is >> c;
+	if (c == 'w') {
+		figureColor = Color::WHITE;
+	}
+	else if (c == 'b') {
+		figureColor = Color::BLACK;
+	}
+	is >> pos;
+}

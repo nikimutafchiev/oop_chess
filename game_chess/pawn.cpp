@@ -2,10 +2,11 @@
 #include "board.hpp"
 
 bool Pawn::canTransform(const Board& board, const Position& p) {
-	return board.pawnEnd(figureColor) == p.x;
+	return board.promotionRank(figureColor) == p.x;
 }
 bool Pawn::canMove(const Board& board, const Position& dest)const {
-	if (!board.isValidPosition(dest))return false;
+	if (!board.isValidPosition(dest))
+		return false;
 	//determines the direction to where the pieces will be headed, depending on the figure color
 	int step = board.pawnDirection(this->figureColor);
 	bool isValidMove = false;
@@ -46,4 +47,19 @@ void Pawn::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const
 		if (this->canMove(board, positions[i]))
 			res.push_back(Move(pos, positions[i]));
 	}
+}
+void Pawn::serialize(std::ostream& os)const {
+	os << "[Pawn] " << (figureColor == Color::WHITE ? "w" : "b") << " " << pos << " " << hasMoved;
+}
+void Pawn::deserialize(std::istream& is) {
+	char c;
+	is >> c;
+	if (c == 'w') {
+		figureColor = Color::WHITE;
+	}
+	else if (c == 'b') {
+		figureColor = Color::BLACK;
+	}
+	is >> pos;
+	is >> hasMoved;
 }

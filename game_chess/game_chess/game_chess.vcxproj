@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="..\bishop.cpp" />
     <ClCompile Include="..\board.cpp" />
+    <ClCompile Include="..\board_cell.cpp" />
     <ClCompile Include="..\diagonally_moving_figure.cpp" />
     <ClCompile Include="..\figure.cpp" />
     <ClCompile Include="..\game.cpp" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="..\bishop.hpp" />
     <ClInclude Include="..\board.hpp" />
+    <ClInclude Include="..\board_cell.hpp" />
     <ClInclude Include="..\diagonally_moving_figure.hpp" />
     <ClInclude Include="..\figure.hpp" />
     <ClInclude Include="..\game.hpp" />
