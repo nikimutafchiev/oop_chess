@@ -1,40 +1,18 @@
 #include <iostream>
+#include <fstream>
 #include "game.hpp"
+#include "player.hpp"
 
-Player::Player() :color(Color::WHITE), name("Default"), score(0) {
-
-	}
-Player::Player(Color color, std::string name) :color(color), name(name), score(0) {
-
-}
-Color Player::getColor()const {
-	return color;
-}
-const std::string& Player::getName()const {
-	return name;
-}
-std::string& Player::getName() {
-	return name;
-}
-int Player::getScore()const {
-	return score;
-}
-void Player::setScore(int newScore) {
-	score = newScore;
-}
-void Player::addScore(int points) {
-	score += points;
-}
-std::ostream& operator<<(std::ostream& os, const Player& p) {
-	return os << p.name << ", score:" << p.score;
-}
 
 Game::Game() {
 	board = nullptr;
 	status = GameStatus::NOT_STARTED;
+	p[0].setColor(Color::WHITE);
+	p[1].setColor(Color::BLACK);
+
 	turn = 0;
 }
-Position Game::enterCoordinates() {
+Position Game::enterCoordinates() const{
 	std::string coord;
 	do {
 		coord.clear();
@@ -48,19 +26,39 @@ Position Game::enterCoordinates() {
 	} while (true);
 	return Position('8' - coord[1], coord[0] - 'A');
 }
-Move Game::enterMove() {
+Move Game::enterMove()const {
 	std::cout << "Enter starting position:";
 	Position p1 = enterCoordinates();
 	std::cout << "Enter destination position:";
 	Position p2 = enterCoordinates();
 	return Move(p1, p2);
 }
+int Game::enterOption()const {
+	std::cout << "Enter 1 to start new game, 2 to load game, 3 to exit\n";
+	int option;
+	std::cout << "* Start new game (1)" << std::endl;
+	std::cout << "* Load game from file (2) " << std::endl;
+	std::cout << "* Exit (3)" << std::endl;
+	do {
+		std::cin >> option;
+		if (option < 1 || option > 3) {
+
+			std::cout << "Invalid option, try again\n";
+		}
+		else {
+			break;
+		}
+	} while (true);
+	return option;
+}
 int Game::processMove(Player& p) {
 	return board->move(p.getColor(), enterMove());
 }
 void Game::play() {
+	status = GameStatus::IN_PLAY;
+
 	while (!isGameOver()) {
-		system("cls");
+		//system("cls");
 		std::cout << p[0] <<std::endl;
 		std::cout << *board<<std::endl;
 		std::cout << p[1] << std::endl;
@@ -77,13 +75,37 @@ void Game::play() {
 	}
 }
 
-void Game::startGame(std::string name1, std::string name2) {
-	board = new Board();
-	status = GameStatus::IN_PLAY;
-	p[0] = Player(Color::WHITE,name1);
-	p[1] = Player(Color::BLACK,name2);
+void Game::start() {
+	std::cout << "CHESS" << std::endl;
+	int option = enterOption();
+	std::string filename;
+	switch (option) {
+		case 1:
+			board = new Board();
+			std::cout << "Enter name for white player:\n";
+			std::cin >> p[0].getName();
+			std::cout << "Enter name for black player:\n";
+			std::cin >> p[1].getName();
+			break;
+		case 2:
+			std::cout << "Enter filename: \n";
+			std::cin >> filename;
+			{
+				std::ifstream file(filename);
+				if (!file.is_open()) {
+					std::cout << "Failed to open file\n";
+					return;
+				}
+				board = new Board();
+				this->deserialize(file);
+			}
+			break;
+		case 3:
+			delete board;
+			board = nullptr;
+			return;
+	}
 	play();
-
 }
 
 Game* Game::instance = nullptr;
@@ -100,7 +122,6 @@ bool Game::isCheck(const std::vector<Move>& moves) {
 			return true;
 		}
 	}
-	//for allPossibleMoves, if dest == King return true;
 	return false;
 }
 //first we get the all possible moves of our opponent and determine is our king at danger, after that we move the king to all its possible moves and check again
@@ -125,7 +146,6 @@ bool Game::isCheckmate() {
 		return true;
 	}
 	return false;
-	return false;
 }
 bool Game::isStalemate() {
 	if (true) {
@@ -142,5 +162,22 @@ bool Game::isDeadPosition(){
 	return false;
 }
 bool Game::isGameOver() {
-	return isStalemate() || isDeadPosition();
+	return isCheckmate()||isStalemate() || isDeadPosition();
+}
+void Game::serialize(std::ostream& os) const {
+	if (status != GameStatus::NOT_STARTED) {
+		board->serialize(os);
+		for (int i = 0; i < 2; i++) {
+			os << "\n";
+			p[i].serialize(os);
+		}
+		os << "\n" << turn;
+	}
+}
+void Game::deserialize(std::istream& is) {
+	board->deserialize(is);
+	for (int i = 0; i < 2; i++) {
+		p[i].deserialize(is);
+	}
+	is >> turn;
 }

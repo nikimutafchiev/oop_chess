@@ -2,18 +2,18 @@
 #include "game.hpp"
 #include <fstream>
 int main() {
-	Board b;
-	b.move(Color::WHITE, Move({ 1,3 }, { 3,3 }));
-	b.move(Color::BLACK, Move({ 6,6 }, { 5,6 }));
-	{
-		std::ofstream file("board.bbb");
-		b.serialize(file);
-	}
-	{
-		std::ifstream file("board.bbb");
-		b.deserialize(file);
-		b.serialize(std::cout);
-	}
+	//Board b;
+	//b.move(Color::WHITE, Move({ 1,3 }, { 3,3 }));
+	//b.move(Color::BLACK, Move({ 6,6 }, { 5,6 }));
+	//{
+	//	std::ofstream file("board.bbb");
+	//	b.serialize(file);
+	//}
+	//{
+	//	std::ifstream file("board.bbb");
+	//	b.deserialize(file);
+	//	b.serialize(std::cout);
+	//}
 	//std::vector<Move>res;
 	//b.move(Color::WHITE, Move({ 1,3 }, { 3,3 }));
 	//b.move(Color::BLACK, Move({ 6,6 }, { 5,6 }));
@@ -23,9 +23,18 @@ int main() {
 	//	std::cout << move << std::endl;
 	//}
 
-	//Game* g = Game::getInstance();
-	//g->startGame("Ivan", "Petkan");
-	//
+	Game* g = Game::getInstance();
+	g->start();
+		//{
+		//	std::ofstream file("game.ggg");
+		//	g->serialize(file);
+		//}
+		//{
+		//	std::ifstream file("game.ggg");
+		//	g->deserialize(file);
+		//	g->serialize(std::cout);
+		//}
+	
 	//Position p1(1, 1),n1(2,1),p2(6,1),n2(5,1);
 	//(*board)[p1].getFigure()->canMove(*board, p1, n1);
 	//(*board)[p2].getFigure()->canMove(*board, p2, n2);

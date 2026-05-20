@@ -19,7 +19,7 @@ std::ostream& Bishop::print(std::ostream& os) {
 	return os << "\033[0m";
 }
 void Bishop::serialize(std::ostream& os)const {
-	os << "[Bishop] " << (figureColor == Color::WHITE?"w":"f") << " " << pos;
+	os << "[Bishop] " << (figureColor == Color::WHITE?"w":"b") << " " << pos;
 }
 void Bishop::deserialize(std::istream& is) {
 	char c;

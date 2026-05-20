@@ -137,6 +137,7 @@
     <ClCompile Include="..\knight.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\pawn.cpp" />
+    <ClCompile Include="..\player.cpp" />
     <ClCompile Include="..\queen.cpp" />
     <ClCompile Include="..\rook.cpp" />
     <ClCompile Include="..\straight_moving_figure.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="..\knight.hpp" />
     <ClInclude Include="..\other.hpp" />
     <ClInclude Include="..\pawn.hpp" />
+    <ClInclude Include="..\player.hpp" />
     <ClInclude Include="..\queen.hpp" />
     <ClInclude Include="..\rook.hpp" />
     <ClInclude Include="..\straight_moving_figure.hpp" />

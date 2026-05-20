@@ -107,5 +107,8 @@ void BoardCell::deserialize(std::istream& is) {
 	else if(figureType == "[King]") {
 		fig = Figure::factory(FigureType::KING, Color::WHITE, { 0, 0 });
 	}
+	else {
+		throw "Unexpected figure type";
+	}
 	fig->deserialize(is);
 }

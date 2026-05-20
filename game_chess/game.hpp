@@ -3,23 +3,7 @@
 #include "board.hpp"
 #include <iostream>
 #include <vector>
-class Player {
-	Color color;
-	std::string name;
-	int score;
-public:
-	Player();
-	Player(Color color, std::string name);
-	Color getColor()const;
-	const std::string& getName()const;
-	std::string& getName();
-	int getScore()const;
-	void setScore(int newScore);
-	void addScore(int points);
-	friend std::ostream& operator<<(std::ostream& os, const Player& p);
-	friend std::istream& operator>>(std::istream& is, Player& p);
-
-};
+#include "player.hpp"
 //add time
 class Game {
 	Board* board;
@@ -29,8 +13,9 @@ class Game {
 	Player p[2];
 	int turn;
 	
-	Position enterCoordinates();
-	Move enterMove();
+	Position enterCoordinates() const;
+	Move enterMove() const;
+	int enterOption() const;
 	int processMove(Player& p);
 	void play();
 	bool isGameOver();
@@ -43,9 +28,11 @@ class Game {
 	Game();
 public:
 
-	void startGame(std::string name1, std::string name2);
+	void start();
 	
 	Game(Game& other) = delete;
 	Game& operator=(Game& other) = delete;
 	static Game* getInstance();
+	void serialize(std::ostream& os) const;
+	void deserialize(std::istream& is);
 };
