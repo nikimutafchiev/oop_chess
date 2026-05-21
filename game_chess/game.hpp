@@ -4,7 +4,7 @@
 #include <vector>
 //add time
 class Game {
-	Board* board;
+	Board board;
 	GameStatus status;
 
 	Player p[2];

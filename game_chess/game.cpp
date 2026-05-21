@@ -5,7 +5,6 @@
 
 
 Game::Game() {
-	board = nullptr;
 	status = GameStatus::NOT_STARTED;
 	p[0].setColor(Color::WHITE);
 	p[1].setColor(Color::BLACK);
@@ -53,10 +52,10 @@ int Game::enterOption()const {
 }
 int Game::processMove(Player& p) {
 	Move move = enterMove();
-	int result = board->move(p, move);
+	int result = board.move(p, move);
 	//checks are we in check after this move, if true, it undo it
-	if (result != -1 && board->isCheck(p.getColor())) {
-		board->undoLastMove();
+	if (result != -1 && board.isCheck(p.getColor())) {
+		board.undoLastMove();
 		std::cout << "King is in check, if this move is made" << std::endl;
 		return -1;
 	}
@@ -68,7 +67,7 @@ void Game::play() {
 	while (!isGameOver()) {
 		system("cls");
 		std::cout << p[0] <<std::endl;
-		std::cout << *board<<std::endl;
+		std::cout << board<<std::endl;
 		std::cout << p[1] << std::endl;
 		std::cout << p[turn].getName() << "'s turn\n";
 		std::cout << (p[turn].isChecked ? "CHECK" : "") << std::endl;
@@ -91,7 +90,6 @@ void Game::start() {
 	std::string filename;
 	switch (option) {
 		case 1:
-			board = new Board();
 			std::cout << "Enter name for white player:\n";
 			std::cin >> p[0].getName();
 			std::cout << "Enter name for black player:\n";
@@ -106,13 +104,10 @@ void Game::start() {
 					std::cout << "Failed to open file\n";
 					return;
 				}
-				board = new Board();
 				this->deserialize(file);
 			}
 			break;
 		case 3:
-			if(board)
-				delete board;
 			board = nullptr;
 			return;
 	}
@@ -130,11 +125,11 @@ bool Game::isCheckmate() {
 	//gets all the possible nexr moves for the other player, to determine are we in check
 	//colors in variable /todo
 	Color playerColor = p[turn].getColor();
-	bool isChecked = board->isCheck(playerColor);
+	bool isChecked = board.isCheck(playerColor);
 	if (isChecked) {
 		std::vector<Move> moves;
 		
-		Board copy(*board);
+		Board copy(board);
 		copy.getAllPossibleMoves(playerColor, moves);
 		for (Move move : moves) {
 			copy.move(p[turn], move);
@@ -161,7 +156,7 @@ bool Game::isStalemate() {
 }
 bool Game::isDeadPosition(){
 
-	if (board->getFigureCount() == 2 && board->getFigureCount(FigureType::KING) == 2) {
+	if (board.getFigureCount() == 2 && board.getFigureCount(FigureType::KING) == 2) {
 		this->status = GameStatus::DEAD_POSITION;
 		return true;
 	}
@@ -172,7 +167,7 @@ bool Game::isGameOver() {
 }
 void Game::serialize(std::ostream& os) const {
 	if (status != GameStatus::NOT_STARTED) {
-		board->serialize(os);
+		board.serialize(os);
 		for (int i = 0; i < 2; i++) {
 			os << "\n";
 			p[i].serialize(os);
@@ -181,7 +176,7 @@ void Game::serialize(std::ostream& os) const {
 	}
 }
 void Game::deserialize(std::istream& is) {
-	board->deserialize(is);
+	board.deserialize(is);
 	for (int i = 0; i < 2; i++) {
 		p[i].deserialize(is);
 	}
