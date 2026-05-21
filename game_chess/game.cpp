@@ -26,13 +26,11 @@ Position Game::enterCoordinates() const{
 	return Position('8' - coord[1], coord[0] - 'A');
 }
 Move Game::enterMove()const {
-	std::cout << "Enter starting position:";
 	Position p1 = enterCoordinates();
-	std::cout << "Enter destination position:";
 	Position p2 = enterCoordinates();
 	return Move(p1, p2);
 }
-int Game::enterOption()const {
+int Game::enterStartOption()const {
 	std::cout << "Enter 1 to start new game, 2 to load game, 3 to exit\n";
 	int option;
 	std::cout << "* Start new game (1)" << std::endl;
@@ -61,6 +59,44 @@ int Game::processMove(Player& p) {
 	}
 	return result;
 }
+std::string Game::enterCommand() const {
+	std::string command;
+	do
+	{
+		std::cin >> command;
+		if (command != "\\quit" && command != "\\save" && command != "\\saveas") {
+			std::cout << "INVALID COMMAND\n";
+		}
+		else {
+			break;
+		}
+	} while (true);
+	return command;
+}
+void Game::handleCommand(const std::string& command) {
+	if (command == "\\quit") {
+		std::exit(0);
+	}
+	else if (command == "\\save") {
+		std::ofstream file("default.ggg");
+		if (!file.is_open()) {
+			std::cout << "Failed to open file\n";
+			return;
+		}
+		this->serialize(file);
+	}
+	else if (command == "\\saveas") {
+		std::string filename;
+		std::cout << "Enter filename: \n";
+		std::cin >> filename;
+		std::ofstream file(filename);
+		if (!file.is_open()) {
+			std::cout << "Failed to open file\n";
+			return;
+		}
+		this->serialize(file);
+	}
+}
 void Game::play() {
 	status = GameStatus::IN_PLAY;
 
@@ -73,20 +109,28 @@ void Game::play() {
 		std::cout << (p[turn].isChecked ? "CHECK" : "") << std::endl;
 		
 		int score = 0;
-		
-		while ((score = processMove(p[turn]))<0) {
-			std::cout << "INVALID MOVE"<<std::endl;
+		std::cout << "Enter move (e.g. A2 A3) or command (e.g. \\quit, \\save, \\saveas):";
+		while(std::cin.peek() <= 32)
+			std::cin.get();
+		if (std::cin.peek() == '\\') {
+			std::string command = enterCommand();
+			handleCommand(command);
 		}
-		p[turn].addScore(score);
-		p[turn ^ 1].addScore(-score);
-		turn ^= 1;
+		else {
+			while ((score = processMove(p[turn])) < 0) {
+				std::cout << "INVALID MOVE" << std::endl;
+			}
+			p[turn].addScore(score);
+			p[turn ^ 1].addScore(-score);
+			turn ^= 1;
+		}
 	}
 	std::cout << std::endl << status << std::endl;
 }
 
 void Game::start() {
 	std::cout << "CHESS" << std::endl;
-	int option = enterOption();
+	int option = enterStartOption();
 	std::string filename;
 	switch (option) {
 		case 1:

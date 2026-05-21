@@ -12,8 +12,10 @@ class Game {
 	
 	Position enterCoordinates() const;
 	Move enterMove() const;
-	int enterOption() const;
+	int enterStartOption() const;
+	std::string enterCommand() const;
 	int processMove(Player& p);
+	void handleCommand(const std::string& command);
 	void play();
 	bool isGameOver();
 	bool isStalemate();

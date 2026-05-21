@@ -11,13 +11,13 @@ BoardCell::BoardCell(const BoardCell& other) {
 	color = other.color;
 }
 BoardCell& BoardCell::operator=(const BoardCell& other) {
-	if (this == &other)
-		return *this;
-	if (other.fig)
-		fig = other.fig->copy();
-	else
-		fig = nullptr;
-	color = other.color;
+	if (this != &other) {
+		if (other.fig)
+			fig = other.fig->copy();
+		else
+			fig = nullptr;
+		color = other.color;
+	}
 	return *this;
 }
 void BoardCell::setFigure(Figure* f) {

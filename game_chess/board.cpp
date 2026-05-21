@@ -58,6 +58,20 @@ Board::Board(const Board& other) {
 		}
 	}
 }
+Board& Board::operator=(const Board& other) {
+	if (this != &other) {
+		this->moves = other.moves;
+		for (Figure* takenFigure : other.takenFigures) {
+			this->takenFigures.push_back(takenFigure->copy());
+		}
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				this->arr[i][j] = other.arr[i][j];
+			}
+		}
+	}
+	return *this;
+}
 size_t Board::getBoardSize() const{
 	return SIZE;
 }
