@@ -5,12 +5,53 @@
 
 
 Game::Game() {
+	commands = {
+	{"\\quit",[]()->void {std::exit(0); }},
+	{"\\save",[this]()->void {
+			std::ofstream file("default.ggg");
+		if (!file.is_open()) {
+			std::cout << "Failed to open file\n";
+			return;
+		}
+		this->serialize(file); }},
+	{ "\\saveas",[this]()->void {
+			std::string filename;
+		std::cout << "Enter filename: \n";
+		std::cin >> filename;
+		std::ofstream file(filename);
+		if (!file.is_open()) {
+			std::cout << "Failed to open file\n";
+			return;
+		}
+		this->serialize(file); } },
+	{"\\start",[this]()->void {
+		std::cout << "Enter name for white player:\n";
+		std::cin >> p[0].getName();
+		std::cout << "Enter name for black player:\n";
+		std::cin >> p[1].getName();
+	}},
+	{"\\load",[this]()->void {
+		std::string filename;
+		std::cout << "Enter filename: \n";
+		std::cin >> filename;
+		{
+			std::ifstream file(filename);
+			if (!file.is_open()) {
+				std::cout << "Failed to open file\n";
+				return;
+			}
+			this->deserialize(file);
+		}
+		}
+	},
+	};
 	status = GameStatus::NOT_STARTED;
 	p[0].setColor(Color::WHITE);
 	p[1].setColor(Color::BLACK);
 
 	turn = 0;
 }
+
 Position Game::enterCoordinates() const{
 	std::string coord;
 	do {
@@ -30,16 +71,15 @@ Move Game::enterMove()const {
 	Position p2 = enterCoordinates();
 	return Move(p1, p2);
 }
-int Game::enterStartOption()const {
+std::string Game::enterStartOption()const {
 	std::cout << "Enter 1 to start new game, 2 to load game, 3 to exit\n";
-	int option;
-	std::cout << "* Start new game (1)" << std::endl;
-	std::cout << "* Load game from file (2) " << std::endl;
-	std::cout << "* Exit (3)" << std::endl;
+	std::string option;
+	std::cout << "* Start new game (\\start)" << std::endl;
+	std::cout << "* Load game from file (\\load) " << std::endl;
+	std::cout << "* Exit (\\quit)" << std::endl;
 	do {
 		std::cin >> option;
-		if (option < 1 || option > 3) {
-
+		if (option != "\\start" && option != "\\load" && option != "\\quit") {
 			std::cout << "Invalid option, try again\n";
 		}
 		else {
@@ -74,28 +114,7 @@ std::string Game::enterCommand() const {
 	return command;
 }
 void Game::handleCommand(const std::string& command) {
-	if (command == "\\quit") {
-		std::exit(0);
-	}
-	else if (command == "\\save") {
-		std::ofstream file("default.ggg");
-		if (!file.is_open()) {
-			std::cout << "Failed to open file\n";
-			return;
-		}
-		this->serialize(file);
-	}
-	else if (command == "\\saveas") {
-		std::string filename;
-		std::cout << "Enter filename: \n";
-		std::cin >> filename;
-		std::ofstream file(filename);
-		if (!file.is_open()) {
-			std::cout << "Failed to open file\n";
-			return;
-		}
-		this->serialize(file);
-	}
+	commands.at(command)();
 }
 void Game::play() {
 	status = GameStatus::IN_PLAY;
@@ -130,44 +149,20 @@ void Game::play() {
 
 void Game::start() {
 	std::cout << "CHESS" << std::endl;
-	int option = enterStartOption();
+	std::string startOption = enterStartOption();
 	std::string filename;
-	switch (option) {
-		case 1:
-			std::cout << "Enter name for white player:\n";
-			std::cin >> p[0].getName();
-			std::cout << "Enter name for black player:\n";
-			std::cin >> p[1].getName();
-			break;
-		case 2:
-			std::cout << "Enter filename: \n";
-			std::cin >> filename;
-			{
-				std::ifstream file(filename);
-				if (!file.is_open()) {
-					std::cout << "Failed to open file\n";
-					return;
-				}
-				this->deserialize(file);
-			}
-			break;
-		case 3:
-			board = nullptr;
-			return;
-	}
+	commands.at(startOption)();
 	play();
 }
 
 Game* Game::getInstance() {
 	static Game instance;
-
 	return &instance;
 }
 
 //first we get the all possible moves of our opponent and determine is our king at danger, after that we move the king to all its possible moves and check again
 bool Game::isCheckmate() {
 	//gets all the possible nexr moves for the other player, to determine are we in check
-	//colors in variable /todo
 	Color playerColor = p[turn].getColor();
 	bool isChecked = board.isCheck(playerColor);
 	if (isChecked) {

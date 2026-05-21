@@ -2,6 +2,8 @@
 #include "board.hpp"
 #include <iostream>
 #include <vector>
+#include <functional>
+#include <map>
 //add time
 class Game {
 	Board board;
@@ -9,10 +11,11 @@ class Game {
 
 	Player p[2];
 	int turn;
+	std::map<std::string, std::function<void()>> commands;
 	
 	Position enterCoordinates() const;
 	Move enterMove() const;
-	int enterStartOption() const;
+	std::string enterStartOption() const;
 	std::string enterCommand() const;
 	int processMove(Player& p);
 	void handleCommand(const std::string& command);

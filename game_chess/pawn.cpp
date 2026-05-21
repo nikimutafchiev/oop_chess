@@ -63,3 +63,21 @@ void Pawn::deserialize(std::istream& is) {
 	is >> pos;
 	is >> hasMoved;
 }
+//Figure* Pawn::promote() const {
+//	std::string choice;
+//	std::cout << "Your pawn can be promoted (rook, knight, bishop, queen)" << std::endl;
+//	std::cin >> choice;
+//	if (choice == "rook") {
+//		return Figure::factory(FigureType::ROOK,figureColor, pos);
+//	}
+//	else if (choice == "knight") {
+//		return Figure::factory(FigureType::KNIGHT,figureColor, pos);
+//	}
+//	else if (choice == "bishop") {
+//		return Figure::factory(FigureType::BISHOP,figureColor, pos);
+//	}
+//	else if (choice == "queen") {
+//		return Figure::factory(FigureType::QUEEN,figureColor, pos);
+//	}
+//	return nullptr;
+//}

@@ -15,6 +15,7 @@ public:
 	bool canTransform(const Board& board, const Position& pos);
 	FigureType getType() const override;
 	void getAllPossibleMoves(const Board& board, std::vector<Move>& res) const override;
+	Figure* promote() const;
 	void move(const Position& pos) override {
 		this->pos = pos;
 		hasMoved = true;

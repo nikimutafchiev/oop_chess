@@ -1,5 +1,5 @@
 b [Rook] w (0,0) 0
-w [Knight] w (0,1)
+w [Empty]
 b [Bishop] w (0,2)
 w [Queen] w (0,3)
 b [King] w (0,4) 0
@@ -14,7 +14,7 @@ w [Pawn] w (1,4) 0
 b [Pawn] w (1,5) 0
 w [Pawn] w (1,6) 0
 b [Pawn] w (1,7) 0
-b [Empty]
+b [Knight] w (2,0)
 w [Empty]
 b [Empty]
 w [Empty]
@@ -63,6 +63,6 @@ b [Bishop] b (7,5)
 w [Knight] b (7,6)
 b [Rook] b (7,7) 0
 
-Ivan 0 w
+Petkan 0 w
 Dragan 0 b
-0
+1
