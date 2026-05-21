@@ -52,7 +52,15 @@ int Game::enterOption()const {
 	return option;
 }
 int Game::processMove(Player& p) {
-	return board->move(p, enterMove());
+	Move move = enterMove();
+	int result = board->move(p, move);
+	//checks are we in check after this move, if true, it undo it
+	if (result != -1 && board->isCheck(p.getColor())) {
+		board->undoLastMove();
+		std::cout << "King is in check, if this move is made" << std::endl;
+		return -1;
+	}
+	return result;
 }
 void Game::play() {
 	status = GameStatus::IN_PLAY;
@@ -74,7 +82,7 @@ void Game::play() {
 		p[turn ^ 1].addScore(-score);
 		turn ^= 1;
 	}
-	std::cout << status;
+	std::cout << std::endl << status << std::endl;
 }
 
 void Game::start() {
@@ -111,12 +119,10 @@ void Game::start() {
 	play();
 }
 
-Game* Game::instance = nullptr;
 Game* Game::getInstance() {
-	if (instance == nullptr) {
-		instance = new Game();
-	}
-	return instance;
+	static Game instance;
+
+	return &instance;
 }
 
 //first we get the all possible moves of our opponent and determine is our king at danger, after that we move the king to all its possible moves and check again
@@ -140,6 +146,7 @@ bool Game::isCheckmate() {
 			
 			copy.undoLastMove();
 		}
+		this->status = GameStatus::CHECKMATE;
 		p[turn].isChecked = true;
 		return true;
 	}
@@ -147,7 +154,7 @@ bool Game::isCheckmate() {
 	return false;
 }
 bool Game::isStalemate() {
-	if (true) {
+	if (false) {
 		this->status = GameStatus::STALEMATE;
 	}
 	return false;

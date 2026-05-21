@@ -49,6 +49,9 @@ Board::Board(BoardCell arr[SIZE][SIZE]) {
 }
 Board::Board(const Board& other) {
 	this->moves = other.moves;
+	for (Figure* takenFigure : other.takenFigures) {
+		this->takenFigures.push_back(takenFigure->copy());
+	}
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			this->arr[i][j] = other.arr[i][j];
@@ -77,7 +80,7 @@ bool Board::canMove(Color playerColor, const Move& move, const Figure* figure) {
 		return false;
 	return true;
 }
-int Board::move(const Player &player, const Move&move) {
+int Board::move(const Player &player, Move&move) {
 	const Figure* currentFigure = (*this)[move.src].getFigure();
 	Color playerColor = player.getColor();
 	if (!canMove(player.getColor(), move, currentFigure))
@@ -85,19 +88,15 @@ int Board::move(const Player &player, const Move&move) {
 	int score = 0;
 	BoardCell& newPosCell = (*this)[move.dest];
 	//it is guaranteed that if there is a figure on the new pos, it is an opponents figure
-	if (newPosCell.hasFigure()) {
-		score += newPosCell.getFigure()->getPoints();
-	}
 	
-	newPosCell.moveFromCell((*this)[move.src], move.dest);
-	moves.push_back(std::pair(player, move));
-	if (player.isChecked) {
-		if (isCheck(playerColor)) {
-			undoLastMove();
-			std::cout << "King is still in check" << std::endl;
-			return -1;
-		}
+	Figure* takenFigure = newPosCell.moveFromCell((*this)[move.src], move.dest);
+	if (takenFigure) {
+		score += takenFigure->getPoints();
+		takenFigures.push_back(takenFigure);
+		move.takesPiece = true;
 	}
+	moves.push_back(std::pair(player, move));
+	
 	//not so important for now
 	//if (currentFigure->getType() == FigureType::PAWN && ((Pawn*)currentFigure)->canTransform(boae)) {
 	//}
@@ -179,24 +178,26 @@ Position Board::getKingPosition(Color c) {
 	}
 	throw "There is no king of this color";
 }
-bool Board::isCheck(Color c) {
-	std::vector<Move> possibleOpponentMoves;
-	getAllPossibleMoves(!c, possibleOpponentMoves);
-	Position kingPosition = getKingPosition(c);
 
-	for (Move move : possibleOpponentMoves) {
-		if ((*this)[move.dest].hasFigure() && move.dest == kingPosition) {
-			return true;
-		}
-	}
-	return false;
-}
 void Board::undoLastMove() {
 	if (!moves.empty()) {
 		std::pair<Player,Move> last = moves.back();
 		moves.pop_back();
 		Move lastMove = last.second;
+		//solves the bug for undoing moving figure,//
+		//BoardCell lastMoveDestCell = (*this)[lastMove.dest];
+
 		(*this)[lastMove.src].moveFromCell((*this)[lastMove.dest], lastMove.src);
+		(*this)[lastMove.src].setFigure((*this)[lastMove.src].getFigure()->copy());
+		if (lastMove.takesPiece) {
+			(*this)[lastMove.dest].setFigure(takenFigures.back());
+			takenFigures.pop_back();
+		}
+		//(*this)[lastMove.src].moveFromCell(lastMoveDestCell, lastMove.src);
+		//if (lastMove.takesPiece) {
+		//	(*this)[lastMove.dest].setFigure(takenFigures.back());
+		//	takenFigures.pop_back();
+		//}
 	}
 }
 void Board::serialize(std::ostream& os) const {
@@ -213,6 +214,18 @@ void Board::deserialize(std::istream& is) {
 			arr[i][j].deserialize(is);
 		}
 	}
+}
+bool Board::isCheck(Color c) {
+	std::vector<Move> possibleOpponentMoves;
+	getAllPossibleMoves(!c, possibleOpponentMoves);
+	Position kingPosition = getKingPosition(c);
+
+	for (Move move : possibleOpponentMoves) {
+		if ((*this)[move.dest].hasFigure() && move.dest == kingPosition) {
+			return true;
+		}
+	}
+	return false;
 }
 //need to make sure all figures are dynamically allocated
 Board::~Board() {

@@ -87,6 +87,8 @@ inline std::ostream& operator<<(std::ostream& os, const GameStatus& status) {
 struct Move {
 	Position src;
 	Position dest;
+	bool takesPiece;
+	Move(const Position& src, const Position& dest, bool takesPiece = false) :src(src), dest(dest), takesPiece(takesPiece) {}
 	friend std::ostream& operator<<(std::ostream& os, const Move &move) {
 		return os << move.src << "->" << move.dest;
 	}

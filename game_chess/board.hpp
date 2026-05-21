@@ -9,6 +9,7 @@ class Board {
 	BoardCell arr[SIZE][SIZE];
 	void initDefaultBoard();
 	std::vector<std::pair<Player,Move>> moves;
+	std::vector<Figure*> takenFigures;
 public:
 	Board();
 	Board(BoardCell arr[SIZE][SIZE]);
@@ -20,7 +21,7 @@ public:
 	BoardCell& operator[](const Position& p);
 	const BoardCell& operator[](const Position& p) const;
 	bool canMove(Color playerColor, const Move& move,const Figure* figure);
-	int move(const Player& player, const Move&move);
+	int move(const Player& player, Move &move);
 	friend std::ostream& operator<<(std::ostream& os, Board& board);
 	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	//gets the direction of the colored pawn on the board

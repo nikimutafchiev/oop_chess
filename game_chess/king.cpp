@@ -20,7 +20,7 @@ bool King::canMove(const Board& board, const Position& dest) const {
 	bool isValidMove = false;
 	if (Position::absDeltaX(dest, pos) <= 1 && Position::absDeltaY(dest, pos) <= 1) {
 		if (board[dest].hasFigure()) {
-			isValidMove = board[dest].isFriendFigure(this);
+			isValidMove = !board[dest].isFriendFigure(this);
 		}
 		else
 			isValidMove = true;

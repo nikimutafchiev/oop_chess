@@ -18,8 +18,8 @@ public:
 	bool hasFigure() const;
 	Color getColor() const;
 	friend std::ostream& operator<<(std::ostream& os, const BoardCell& bc);
-	//gets the value from the cell and leaves the source with nothing
-	void moveFromCell(BoardCell& other, const Position& myPos);
+	//gets the value from the cell and leaves the source with nothing and returns the figure that was on the cell
+	Figure* moveFromCell(BoardCell& other, const Position& myPos);
 	//returns if the color of our figure(if there is one) is the same as the fig color
 	bool isFriendFigure(const Figure* fig) const;
 	bool isFriendColor(Color c) const;

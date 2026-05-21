@@ -43,13 +43,15 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 	os << "\033[0m";
 	return os;
 }
-void BoardCell::moveFromCell(BoardCell& other, const Position& myPos) {
-	if (this->fig)
-		delete this->fig;
+Figure* BoardCell::moveFromCell(BoardCell& other, const Position& myPos) {
+	if(!other.fig)
+		throw "There is no figure to move";
+	Figure* figToTake = fig;
 	this->setFigure(other.fig);
 	fig->move(myPos);
 	//if (fig->getType() == FigureType::PAWN)//maybe logic for promotion here
 	other.setFigure(nullptr);
+	return figToTake;
 }
 bool BoardCell::isFriendFigure(const Figure* other) const {
 	if (fig) {

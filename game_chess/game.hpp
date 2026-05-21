@@ -5,7 +5,6 @@
 //add time
 class Game {
 	Board* board;
-	static Game* instance;
 	GameStatus status;
 
 	Player p[2];
@@ -20,6 +19,7 @@ class Game {
 	bool isStalemate();
 	bool isCheckmate();
 	bool isDeadPosition();
+
 	
 
 	Game();

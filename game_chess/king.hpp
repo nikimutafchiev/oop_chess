@@ -5,11 +5,13 @@
 
 class King : public Figure {
 	bool hasMoved;
-
 public:
 	bool canMove(const Board& board, const Position& dest)const override;
 	void getAllPossibleMoves(const Board& board, std::vector<Move>& res) const override;
 	King(Color figureColor, const Position& pos);
+	King(const King& other) :Figure(other.figureColor, other.pos, 1) {
+		hasMoved = false;
+	}
 	std::ostream& print(std::ostream& os) override;
 	FigureType getType() const override;
 	void move(const Position& pos) override {
