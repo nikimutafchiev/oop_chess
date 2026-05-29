@@ -6,31 +6,34 @@
 
 Game::Game() {
 	commands = {
-	{"\\quit",[]()->void {std::exit(0); }},
-	{"\\save",[this]()->void {
+	{"\\quit",[]()->bool {std::exit(0); }},
+	{"\\save",[this]()->bool {
 			std::ofstream file("default.ggg");
 		if (!file.is_open()) {
 			std::cout << "Failed to open file\n";
-			return;
+			return false;
 		}
-		this->serialize(file); }},
-	{ "\\saveas",[this]()->void {
+		this->serialize(file);
+		return true; }},
+	{ "\\saveas",[this]()->bool {
 			std::string filename;
 		std::cout << "Enter filename: \n";
 		std::cin >> filename;
 		std::ofstream file(filename);
 		if (!file.is_open()) {
 			std::cout << "Failed to open file\n";
-			return;
+			return false;
 		}
-		this->serialize(file); } },
-	{"\\start",[this]()->void {
+		this->serialize(file);
+		return true; } },
+	{"\\start",[this]()->bool {
 		std::cout << "Enter name for white player:\n";
 		std::cin >> p[0].getName();
 		std::cout << "Enter name for black player:\n";
 		std::cin >> p[1].getName();
+		return true;
 	}},
-	{"\\load",[this]()->void {
+	{"\\load",[this]()->bool {
 		std::string filename;
 		std::cout << "Enter filename: \n";
 		std::cin >> filename;
@@ -38,9 +41,10 @@ Game::Game() {
 			std::ifstream file(filename);
 			if (!file.is_open()) {
 				std::cout << "Failed to open file\n";
-				return;
+				return false;
 			}
 			this->deserialize(file);
+			return true;
 		}
 		}
 	},
@@ -64,7 +68,7 @@ Position Game::enterCoordinates() const{
 			break;
 		}
 	} while (true);
-	return Position('8' - coord[1], coord[0] - 'A');
+	return Position::fromChessBoardCoordinates(coord);
 }
 Move Game::enterMove()const {
 	Position p1 = enterCoordinates();
@@ -80,7 +84,7 @@ std::string Game::enterStartOption()const {
 	do {
 		std::cin >> option;
 		if (option != "\\start" && option != "\\load" && option != "\\quit") {
-			std::cout << "Invalid option, try again\n";
+			std::cout << "INVALID STARTING OPTION\n";
 		}
 		else {
 			break;
@@ -97,6 +101,7 @@ int Game::processMove(Player& p) {
 		std::cout << "King is in check, if this move is made" << std::endl;
 		return -1;
 	}
+
 	return result;
 }
 std::string Game::enterCommand() const {
@@ -116,21 +121,28 @@ std::string Game::enterCommand() const {
 void Game::handleCommand(const std::string& command) {
 	commands.at(command)();
 }
+std::ostream& operator<<(std::ostream& os, const Game& game)
+{
+	os << game.p[0] << std::endl;
+	os << game.board << std::endl;
+	os << game.p[1] << std::endl;
+	os << game.p[game.turn].getName() << "'s turn\n";
+	os << (game.p[game.turn].isChecked ? "CHECK" : "") << std::endl;
+	return os;
+}
 void Game::play() {
 	status = GameStatus::IN_PLAY;
-
+	turn = 0;
 	while (!isGameOver()) {
 		system("cls");
-		std::cout << p[0] <<std::endl;
-		std::cout << board<<std::endl;
-		std::cout << p[1] << std::endl;
-		std::cout << p[turn].getName() << "'s turn\n";
-		std::cout << (p[turn].isChecked ? "CHECK" : "") << std::endl;
+
+		std::cout << *this;
 		
 		int score = 0;
 		std::cout << "Enter move (e.g. A2 A3) or command (e.g. \\quit, \\save, \\saveas):";
-		while(std::cin.peek() <= 32)
-			std::cin.get();
+
+		removeWhiteSpaces(std::cin);
+
 		if (std::cin.peek() == '\\') {
 			std::string command = enterCommand();
 			handleCommand(command);
@@ -149,9 +161,10 @@ void Game::play() {
 
 void Game::start() {
 	std::cout << "CHESS" << std::endl;
-	std::string startOption = enterStartOption();
-	std::string filename;
-	commands.at(startOption)();
+	std::string startOption;
+	do {
+		startOption = enterStartOption();
+	}while(commands.at(startOption)());
 	play();
 }
 
@@ -188,13 +201,16 @@ bool Game::isCheckmate() {
 	return false;
 }
 bool Game::isStalemate() {
-	if (false) {
+	Color playerColor = p[turn].getColor();
+	std::vector<Move> moves;
+	board.getAllPossibleMoves(playerColor, moves);
+	if (!board.isCheck(playerColor) && moves.size() == 0) {
 		this->status = GameStatus::STALEMATE;
+		return true;
 	}
 	return false;
 }
 bool Game::isDeadPosition(){
-
 	if (board.getFigureCount() == 2 && board.getFigureCount(FigureType::KING) == 2) {
 		this->status = GameStatus::DEAD_POSITION;
 		return true;

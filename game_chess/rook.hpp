@@ -5,6 +5,9 @@
 class Rook : public StraightMovingFigure {
 	bool hasMoved;
 public:
+	bool moved()const {
+		return hasMoved;
+	}
 	bool canMove(const Board& board, const Position& dest)const override;
 	void getAllPossibleMoves(const Board& board, std::vector<Move>& res) const override;
 	Rook(Color figureColor, const Position& pos);

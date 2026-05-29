@@ -2,7 +2,7 @@
 Player::Player() :color(Color::WHITE), name("Default"), score(0) {
 
 }
-Player::Player(Color color, std::string name) :color(color), name(name), score(0) {
+Player::Player(Color color, std::string name, PlayerType type = PlayerType::HUMAN) :color(color), name(name), score(0),type(type) {
 
 }
 Color Player::getColor()const {

@@ -7,11 +7,11 @@
 //add time
 class Game {
 	Board board;
-	GameStatus status;
-
 	Player p[2];
+	//the commands return if there were successful
+	std::map<std::string, std::function<bool()>> commands;
 	int turn;
-	std::map<std::string, std::function<void()>> commands;
+	GameStatus status;
 	
 	Position enterCoordinates() const;
 	Move enterMove() const;
@@ -37,4 +37,5 @@ public:
 	static Game* getInstance();
 	void serialize(std::ostream& os) const;
 	void deserialize(std::istream& is);
+	friend std::ostream& operator<<(std::ostream& os, const Game& g);
 };

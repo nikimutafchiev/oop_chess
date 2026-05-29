@@ -28,6 +28,16 @@ struct Position {
 	static int absDeltaY(const Position& p1, const Position& p2) {
 		return abs(deltaY(p1, p2));
 	}
+	static std::string toChessBoardCoordinates(const Position& p)
+	{
+		if (p.x >= 8 || p.y >=8)
+			return "";
+		const char chessBoardCoordinates[] = { 'A'+p.y,'8' - p.x,0 };
+		return chessBoardCoordinates;
+	}
+	static Position fromChessBoardCoordinates(const std::string& coordinates) {
+		return Position('8' - coordinates[1], coordinates[0] - 'A');
+	}
 	friend std::ostream& operator<<(std::ostream& os, const Position& p) {
 		return os << "(" << p.x << "," << p.y << ")";
 	}
@@ -57,6 +67,7 @@ struct Position {
 	}
 
 };
+
 enum class Color {
 	BLACK = 0, WHITE
 };
@@ -69,18 +80,21 @@ enum class FigureType {
 enum class GameStatus {
 	NOT_STARTED, IN_PLAY, STALEMATE, CHECKMATE, DEAD_POSITION
 };
+enum class PlayerType {
+	HUMAN,COMPUTER
+};
 inline std::ostream& operator<<(std::ostream& os, const GameStatus& status) {
 	switch (status) {
 	case GameStatus::NOT_STARTED:
-		return os << "Not Started";
+		return os << "NOT STARTED";
 	case GameStatus::IN_PLAY:
-		return os << "In Play";
+		return os << "IN PLAY";
 	case GameStatus::STALEMATE:
-		return os << "Stalemate";
+		return os << "STALEMATE";
 	case GameStatus::CHECKMATE:
-		return os << "Checkmate";
+		return os << "CHECKMATE";
 	case GameStatus::DEAD_POSITION:
-		return os << "Dead Position";
+		return os << "DEAD POSITION";
 	}
 	return os;
 }
@@ -93,3 +107,7 @@ struct Move {
 		return os << move.src << "->" << move.dest;
 	}
 };
+inline void removeWhiteSpaces(std::istream& is) {
+	while (is.peek() <= 32)
+		is.get();
+}

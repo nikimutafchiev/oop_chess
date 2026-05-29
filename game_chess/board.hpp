@@ -14,15 +14,22 @@ public:
 	Board();
 	Board(BoardCell arr[SIZE][SIZE]);
 	Board(const Board& other);
-	//maybe unnessesary
 	Board& operator=(const Board& other);
 	size_t getBoardSize()const;
 	bool isValidPosition(const Position& p) const;
+	//checks if the src and dest are possible and if there is figure and if it is ours
+	bool isValidMove(Color playerColor, const Move& m)const;
 	BoardCell& operator[](const Position& p);
 	const BoardCell& operator[](const Position& p) const;
-	bool canMove(Color playerColor, const Move& move,const Figure* figure);
+	bool canMove(Color playerColor, const Move& move) const;
+	bool isPawnPromotion(const Figure* figure);
+	//the position is the position for which isPawnPromotion is true
+	void pawnPromotion(const Position& p);
+	//the only possible castling is when the king is moving (e.g. e8 - c8)
+	bool isCastling(Color playerColor, const Move& move);
+	int castling(Color playerColor, const Move& move);
 	int move(const Player& player, Move &move);
-	friend std::ostream& operator<<(std::ostream& os, Board& board);
+	friend std::ostream& operator<<(std::ostream& os,const Board& board);
 	void getAllPossibleMoves(Color c, std::vector<Move>& res);
 	//gets the direction of the colored pawn on the board
 	int pawnDirection(Color color) const;
@@ -34,7 +41,7 @@ public:
 	void goRoute(const Position& initPos, Position currPos, int directionX, int directionY, Color enemyColor, std::vector<Move>& res)const;
 	void undoLastMove();
 	//gets the position of c colored king/used for check logic
-	Position getKingPosition(Color c);
+	//Position getKingPosition(Color c);
 	void serialize(std::ostream& os) const;
 	void deserialize(std::istream& is);
 	bool isCheck(Color c);

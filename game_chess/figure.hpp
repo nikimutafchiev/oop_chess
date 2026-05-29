@@ -18,6 +18,9 @@ public:
 	Color getColor() const{
 		return figureColor;
 	};
+	Position getPosition() const{
+		return pos;
+	}
 	unsigned getPoints() const{
 		return points;
 	}

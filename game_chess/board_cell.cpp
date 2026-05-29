@@ -46,10 +46,10 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 Figure* BoardCell::moveFromCell(BoardCell& other, const Position& myPos) {
 	if(!other.fig)
 		throw "There is no figure to move";
+	// std::exchange
 	Figure* figToTake = fig;
 	this->setFigure(other.fig);
 	fig->move(myPos);
-	//if (fig->getType() == FigureType::PAWN)//maybe logic for promotion here
 	other.setFigure(nullptr);
 	return figToTake;
 }

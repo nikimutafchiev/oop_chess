@@ -1,6 +1,8 @@
 #include <iostream>
 #include "board.hpp"
 #include "pawn.hpp"
+#include "king.hpp"
+#include "rook.hpp"
 #include "board_cell.hpp"
 #include "player.hpp"
 
@@ -9,6 +11,16 @@ int Board::promotionRank(Color color)const {
 }
 bool Board::isValidPosition(const Position& p)const {
 	return p.x < SIZE && p.y < SIZE;
+}
+bool Board::isValidMove(Color playerColor, const Move& m) const {
+	if (!isValidPosition(m.src)|| !isValidPosition(m.dest))
+		return false;
+	const Figure* figure = (*this)[m.src].getFigure();
+	if (!figure)
+		return false;
+	if (figure->getColor() != playerColor)
+		return false;
+	return true;
 }
 void Board::initDefaultBoard() {
 	for (unsigned i = 0; i < SIZE; i++) {
@@ -85,20 +97,21 @@ const BoardCell& Board::operator[](const Position& p) const{
 		std::exit(-1);
 	return arr[p.x][p.y];
 }
-bool Board::canMove(Color playerColor, const Move& move, const Figure* figure) {
-	if (!figure)
-		return false;
-	if (figure->getColor() != playerColor)
-		return false;
-	if (!figure->canMove(*this, move.dest))
+bool Board::canMove(Color playerColor, const Move& move) const {
+	if (!isValidMove(playerColor,move) || !(*this)[move.src].getFigure()->canMove(*this, move.dest))
 		return false;
 	return true;
 }
 int Board::move(const Player &player, Move&move) {
-	const Figure* currentFigure = (*this)[move.src].getFigure();
 	Color playerColor = player.getColor();
-	if (!canMove(player.getColor(), move, currentFigure))
-		return -1;
+
+	if (!canMove(playerColor, move))
+		if (castling(playerColor, move) == 0)
+			return 0;
+		else
+			return -1;
+
+	const Figure* currentFigure = (*this)[move.src].getFigure();
 	int score = 0;
 	BoardCell& newPosCell = (*this)[move.dest];
 	//it is guaranteed that if there is a figure on the new pos, it is an opponents figure
@@ -110,23 +123,23 @@ int Board::move(const Player &player, Move&move) {
 		move.takesPiece = true;
 	}
 	moves.push_back(std::pair(player, move));
+	//the check for pawn promotion is inside the function, no need to call it twice
+	pawnPromotion(currentFigure->getPosition());
 	
-	//not so important for now
-	//if (currentFigure->getType() == FigureType::PAWN && ((Pawn*)currentFigure)->canTransform(boae)) {
-	//}
 	return score;
 }
-std::ostream& operator<<(std::ostream& os, Board& board) {
+std::ostream& operator<<(std::ostream& os,const Board& board) {
 	os << "\n";
-	for (int i = 0; i < board.SIZE; i++) {
-		os << board.SIZE - i;
-		for (int j = 0; j < board.SIZE; j++) {
+	size_t size = board.getBoardSize();
+	for (int i = 0; i < size; i++) {
+		os << size - i;
+		for (int j = 0; j < size; j++) {
 			os << board.arr[i][j];
 		}
 		os << "\n";
 	}
 	os << " ";
-	for (int i = 0; i < board.SIZE; i++) {
+	for (int i = 0; i < size; i++) {
 		os << (char)(i + 'A') << "     ";
 	}
 	os << "\n";
@@ -178,20 +191,6 @@ void Board::goRoute(const Position& initPos, Position currPos, int directionX, i
 	res.push_back(Move(initPos, currPos));
 	goRoute(initPos, { currPos.x + directionX,currPos.y + directionY }, directionX, directionY, color, res);
 }
-//this should always return valid position, because if not the game will be finished
-Position Board::getKingPosition(Color c) {
-	for (unsigned i = 0; i < SIZE; i++) {
-		for (unsigned j = 0; j < SIZE; j++) {
-			if (arr[i][j].hasFigure()) {
-				const Figure* f = arr[i][j].getFigure();
-				if (f->getColor() == c && f->getType() == FigureType::KING) {
-					return { i,j };
-				}
-			}
-		}
-	}
-	throw "There is no king of this color";
-}
 
 void Board::undoLastMove() {
 	if (!moves.empty()) {
@@ -232,16 +231,111 @@ void Board::deserialize(std::istream& is) {
 bool Board::isCheck(Color c) {
 	std::vector<Move> possibleOpponentMoves;
 	getAllPossibleMoves(!c, possibleOpponentMoves);
-	Position kingPosition = getKingPosition(c);
 
 	for (Move move : possibleOpponentMoves) {
-		if ((*this)[move.dest].hasFigure() && move.dest == kingPosition) {
-			return true;
+		if ((*this)[move.dest].hasFigure()) {
+			const Figure* destFigure = (*this)[move.dest].getFigure();
+			//maybe color check is necessery because is not possible if it is the opponent king
+			if(destFigure->getType() == FigureType::KING && destFigure->getColor()==c)
+				return true;
 		}
 	}
 	return false;
 }
-//need to make sure all figures are dynamically allocated
+bool Board::isPawnPromotion(const Figure* figure) {
+	if (figure->getType() == FigureType::PAWN) {
+		return ((Pawn*)figure)->canTransform(*this);
+	}
+	return false;
+}
+void Board::pawnPromotion(const Position& p) {
+	if (!(*this)[p].hasFigure())
+		return;
+	const Figure* currentFigure = (*this)[p].getFigure();
+	if (!isPawnPromotion(currentFigure))
+		return;
+	std::cout << "Pawn at position " << Position::toChessBoardCoordinates(p) << " can be promoted." << std::endl;
+	std::cout << "Select new figure type (Queen, Knight, Rook, Bishop): ";
+	do {
+		std::string newType;
+		std::cin >> newType;
+		if (newType == "Queen") {
+			(*this)[p].setFigure(Figure::factory(FigureType::QUEEN,currentFigure->getColor(),currentFigure->getPosition()));
+		}
+		else if (newType == "Knight") {
+			(*this)[p].setFigure(Figure::factory(FigureType::KNIGHT, currentFigure->getColor(), currentFigure->getPosition()));
+		}
+		else if (newType == "Rook") {
+			(*this)[p].setFigure(Figure::factory(FigureType::ROOK, currentFigure->getColor(), currentFigure->getPosition()));
+		}
+		else if (newType == "Bishop") {
+			(*this)[p].setFigure(Figure::factory(FigureType::BISHOP, currentFigure->getColor(), currentFigure->getPosition()));
+		}
+		else {
+			std::cout << "Invalid figure type"<<std::endl;
+			continue;
+		}
+		delete currentFigure;
+		break;
+	} while (true);
+	
+}
+bool Board::isCastling(Color playerColor, const Move& move) {
+	if (!isValidMove(playerColor, move)) {
+		return false;
+	}
+	const Figure* currentFigure = (*this)[move.src].getFigure();
+	//we can only make castling with the king
+	if (currentFigure->getType() != FigureType::KING)
+		return false;
+	
+	if (Position::absDeltaY(move.src, move.dest) != 2 || Position::absDeltaX(move.src,move.dest) != 0)
+		return false;
+
+	if (((King*)currentFigure)->moved())
+		return false;
+	int deltaY = Position::deltaY(move.dest, move.src);
+	BoardCell possibleRookCell;
+	std::vector<Move> moves;
+	if (deltaY < 0) {
+		//we will check if there are 3 free spaces when is big castling and 2 free when is small
+		
+		goRoute(move.src, { move.src.x,move.src.y - 1 }, 0, -1, playerColor, moves);
+		if (moves.size() != 3)
+			return false;
+		possibleRookCell = arr[move.src.x][0];
+	}
+	else {
+		//replace with size-1;
+		goRoute(move.src, { move.src.x,move.src.y + 1 }, 0, 1, playerColor, moves);
+		if (moves.size() != 2)
+			return false;
+		possibleRookCell = arr[move.src.x][7];
+	}
+	if (possibleRookCell.hasFigure()) {
+		const Figure* possibleRookFigure = possibleRookCell.getFigure();
+		if (possibleRookFigure->getType() == FigureType::ROOK && !((King*)currentFigure)->moved())
+			return true;
+	}
+	return false;
+}
+int Board::castling(Color playerColor, const Move& move) {
+	if (!isCastling(playerColor, move)) {
+		return -1;
+	}
+	(*this)[move.dest].moveFromCell((*this)[move.src], move.dest);
+	int deltaY = Position::deltaY(move.dest, move.src);
+	Position rookDest;
+	if (deltaY < 0) {
+		rookDest = { move.dest.x, move.dest.y + 1 };
+		(*this)[rookDest].moveFromCell(arr[move.src.x][0], rookDest);
+	}
+	else {
+		rookDest = { move.dest.x, move.dest.y - 1 };
+		(*this)[rookDest].moveFromCell(arr[move.src.x][7],rookDest );
+	}
+	return 0;
+}
 Board::~Board() {
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {

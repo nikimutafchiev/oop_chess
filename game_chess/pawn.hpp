@@ -5,6 +5,9 @@
 class Pawn : public Figure {
 	bool hasMoved;
 public:
+	bool moved()const {
+		return hasMoved;
+	}
 	bool canMove(const Board& board, const Position& dest)const override;
 	Pawn(Color figureColor, const Position& pos);
 	Pawn(const Pawn& other):Figure(other.figureColor,other.pos,1) {
@@ -12,10 +15,9 @@ public:
 	}
 	std::ostream& print(std::ostream& os)override;
 	//this function checks if the pawn is at the end of the board, so that i t can be transformed to every other figure
-	bool canTransform(const Board& board, const Position& pos);
+	bool canTransform(const Board& board);
 	FigureType getType() const override;
 	void getAllPossibleMoves(const Board& board, std::vector<Move>& res) const override;
-	Figure* promote() const;
 	void move(const Position& pos) override {
 		this->pos = pos;
 		hasMoved = true;

@@ -15,6 +15,7 @@ void King::getAllPossibleMoves(const Board& board, std::vector<Move>& res) const
 			res.push_back(Move(pos, positions[i]));
 	}
 }
+//can directly return true/false TODO
 bool King::canMove(const Board& board, const Position& dest) const {
 	if (!board.isValidPosition(dest))return false;
 	bool isValidMove = false;
