@@ -1,9 +1,12 @@
 #pragma once
 #include "other.hpp"
 #include "figure.hpp"
+#include <memory>
 
+using std::unique_ptr;
 class BoardCell {
 	//unique pointer?
+	
 	Figure* fig;
 	Color color;
 public:
@@ -11,9 +14,7 @@ public:
 	BoardCell(Figure* fig, Color color);
 	BoardCell(const BoardCell& other);
 	BoardCell& operator =(const BoardCell& other);
-	//BoardCell& operator=(const BoardCell& other);
 	void setFigure(Figure* f);
-	//	Figure* getFigure();
 	const Figure* getFigure() const;
 	bool hasFigure() const;
 	Color getColor() const;

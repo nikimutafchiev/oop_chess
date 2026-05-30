@@ -26,25 +26,23 @@ Figure* Figure::factory(FigureType ft) {
 		return new King(Color::WHITE, { 0,0 });
 	default:return nullptr;
 	}
-	return nullptr;
 }
 Figure* Figure::factory(FigureType ft, Color color, const Position&initial_position) {
 	switch (ft) {
 	case FigureType::PAWN:
-		return new Pawn(color,initial_position);
+		return new Pawn(color, initial_position);
 	case FigureType::ROOK:
-		return new Rook(color,initial_position);
+		return new Rook(color, initial_position);
 	case FigureType::KNIGHT:
-		return new Knight(color,initial_position);
+		return new Knight(color, initial_position);
 	case FigureType::BISHOP:
-		return new Bishop(color,initial_position);
+		return new Bishop(color, initial_position);
 	case FigureType::QUEEN:
-		return new Queen(color,initial_position);
+		return new Queen(color, initial_position);
 	case FigureType::KING:
-		return new King(color,initial_position);
+		return new King(color, initial_position);
 	default:return nullptr;
 	}
-	return nullptr;
 }
 
 

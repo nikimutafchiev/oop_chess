@@ -20,6 +20,7 @@ BoardCell& BoardCell::operator=(const BoardCell& other) {
 	}
 	return *this;
 }
+//there is RAII problem
 void BoardCell::setFigure(Figure* f) {
 	fig = f;
 }
@@ -46,7 +47,6 @@ std::ostream& operator<<(std::ostream& os, const BoardCell& bc) {
 Figure* BoardCell::moveFromCell(BoardCell& other, const Position& myPos) {
 	if(!other.fig)
 		throw "There is no figure to move";
-	// std::exchange
 	Figure* figToTake = fig;
 	this->setFigure(other.fig);
 	fig->move(myPos);

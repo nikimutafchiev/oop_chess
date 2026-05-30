@@ -164,7 +164,7 @@ void Game::start() {
 	std::string startOption;
 	do {
 		startOption = enterStartOption();
-	}while(commands.at(startOption)());
+	}while(!commands.at(startOption)());
 	play();
 }
 
